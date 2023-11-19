@@ -4,6 +4,7 @@ import { FiShoppingBag } from 'react-icons/fi';
 import { Props as IPanelItem } from "@/components/SidePanel/PanelItem";
 import PanelCurrentUser from "@/components/SidePanel/PanelCurrentUser";
 import PanelNav from "@/components/SidePanel/PanelNav";
+import Image from 'next/image';
 
 export interface Props {
 
@@ -24,12 +25,12 @@ export default function SidePanel({}: Props) {
     ];
 
     return (
-        <header className="bg-white w-[20%] h-screen border-r border-gray-950 border-opacity-10 relative">
+        <header className="bg-white w-64 h-screen border-r border-gray-950 border-opacity-10 relative">
             {/* Panel head */}
             <div className="container p-4">
                 <div className="flex justify-start items-center gap-4 pb-4">
                     <figure className="w-10">
-                        <img src={"/svg/logo.svg"} alt="logo" />
+                        <Image src={"/svg/logo.svg"} alt="logo" width={40} height={40} />
                     </figure>
                     <h1 className="text-lg font-medium text-sky-900">Admin Panel</h1>
                 </div>

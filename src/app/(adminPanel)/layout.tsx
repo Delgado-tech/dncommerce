@@ -18,8 +18,8 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body className={`${inter.className} flex`}>
-        <SidePanel />  
-        {children}
+        <div className="fixed z-50"><SidePanel /></div>  
+        <div className="ml-64 w-full">{children}</div>
       </body>
     </html>
   )
