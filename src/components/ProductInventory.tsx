@@ -2,7 +2,8 @@
 
 import RoundButton from "@/components/Buttons/RoundButton";
 import { useEffect, useState } from "react";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiTrash } from "react-icons/fi";
+import Modal from "./Modal";
 
 export interface IInventory {
     table: ITable;
@@ -68,6 +69,9 @@ export default function ProductInventory({inventory}: Props) {
 
     return (
         <section className="bg-zinc-100 w-full">
+                <Modal>
+                    <p>teste</p>
+                </Modal>
             <main className="p-16 w-full max-w-[1600px] min-h-screen h-full bg-zinc-50 opacity-90">
                 { inventory ? (
                     <>
@@ -93,11 +97,30 @@ export default function ProductInventory({inventory}: Props) {
 
                     <section>
                         <table className="text-left w-full tabular-nums border-spacing-y-4 border-separate overflow-x-auto">
-                            <thead className={`text-sky-950 ${layout_shadow}`}>
-                                <tr>
-                                    <th className="bg-sky-200 px-4 py-2 rounded-bl-md rounded-tl-md sticky top-0 z-50"></th>
+                            <thead className={`text-sky-950`}>
+                                <tr className={`sticky top-0 bg-zinc-50 z-50 h-10`}>
+                                    <th colSpan={headers.length + 1} className="px-4 py-2">
+                                        <div className="flex gap-8 items-center">
+                                            <a className={`font-medium flex items-center gap-2 select-none ${selectedItems.length === 0 ? "text-zinc-300" : "hover:text-red-500 cursor-pointer"} transition-colors`}
+                                                //todo onclick modal
+                                            > 
+                                                <FiTrash /> 
+                                                <p>Excluir Registros</p>
+                                            </a>
+                                            <p className={`font-normal select-none ${selectedItems.length === 0 ? "text-zinc-300 " : "underline cursor-pointer transition-colors"}`}
+                                                onClick={() => {
+                                                    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll("input[type='checkbox']");
+                                                    checkboxes.forEach((checkbox) => checkbox.checked = false);
+                                                    setSelectedItems([]);
+                                                }}
+                                            >Limpar Seleção</p>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr className={`sticky top-10 z-40 bg-sky-200 ${layout_shadow}`}>
+                                    <th className="px-4 py-2 rounded-bl-md rounded-tl-md"></th>
                                     { headers.map((header, index) => (
-                                        <th key={index} className={`bg-sky-200 px-4 py-2 sticky top-0 z-50 ${roundedTableBorder(index, headers.length - 1)}`}>{header}</th>
+                                        <th key={index} className={`px-4 py-2 ${roundedTableBorder(index, headers.length - 1)}`}>{header}</th>
                                         ))}
                                 </tr>
                             </thead>
