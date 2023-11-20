@@ -91,13 +91,13 @@ export default function ProductInventory({inventory}: Props) {
                         </div>
                     </section>
 
-                    <form className="overflow-x-auto">
-                        <table className="text-left w-full tabular-nums border-spacing-y-4 border-separate">
-                            <thead className={`bg-sky-200 text-sky-950 ${layout_shadow}`}>
+                    <section>
+                        <table className="text-left w-full tabular-nums border-spacing-y-4 border-separate overflow-x-auto">
+                            <thead className={`text-sky-950 ${layout_shadow}`}>
                                 <tr>
-                                    <th className="px-4 py-2 rounded-bl-md rounded-tl-md sticky top-0 z-50"></th>
+                                    <th className="bg-sky-200 px-4 py-2 rounded-bl-md rounded-tl-md sticky top-0 z-50"></th>
                                     { headers.map((header, index) => (
-                                        <th key={index} className={`px-4 py-2 sticky top-0 z-50 ${roundedTableBorder(index, headers.length - 1)}`}>{header}</th>
+                                        <th key={index} className={`bg-sky-200 px-4 py-2 sticky top-0 z-50 ${roundedTableBorder(index, headers.length - 1)}`}>{header}</th>
                                         ))}
                                 </tr>
                             </thead>
@@ -117,7 +117,7 @@ export default function ProductInventory({inventory}: Props) {
                                 }
                             </tbody>
                         </table>
-                    </form>
+                    </section>
                     </>
                 ): (
                     <h1 className="text-2xl font-medium text-zinc-600">Inventário não encontrado!</h1>
