@@ -3,7 +3,7 @@
 import RoundButton from "@/components/Buttons/RoundButton";
 import { useEffect, useState } from "react";
 import { FiPlus, FiTrash } from "react-icons/fi";
-import Modal from "./Modal";
+import Modal from "./Modals/Modal";
 
 export interface IInventory {
 	table: ITable;
@@ -35,9 +35,38 @@ interface Props {
 	inventory?: IInventory;
 }
 
+interface OpenedModal {
+	id: number;
+	isActive: boolean;
+}
+
+enum EModals {
+	"deleteRegister",
+	"test",
+}
+
 export default function ProductInventory({ inventory }: Props) {
 	const [selectedItems, setSelectedItems] = useState<string[]>([]);
+	const [openedModals, setOpenedModals] = useState<OpenedModal[]>([
+		{ id: EModals.deleteRegister, isActive: true },
+		{ id: EModals.test, isActive: true },
+	]);
 
+	function setOpenedModal(modalId: number, isOpen: boolean): void {
+		const newOpenedModals = openedModals.map((modal) => {
+			if (modal.id === modalId) {
+				modal.isActive = isOpen;
+			}
+			return modal;
+		});
+		setOpenedModals(newOpenedModals);
+	}
+
+	function isModalActive(modalId: number): boolean {
+		return openedModals.find((modal) => modal.id === modalId)?.isActive || false;
+	}
+
+	//#region
 	const headers = inventory!.table.headers;
 	const rows = inventory!.table.rows;
 	const layout_shadow = "shadow-md rounded-md";
@@ -69,12 +98,103 @@ export default function ProductInventory({ inventory }: Props) {
 
 		return roundBorder;
 	}
+	//#endregion
 
 	return (
 		<section className="w-full bg-zinc-100">
-			<Modal>
-				<p>teste</p>
+			<Modal
+				modalId={EModals.test}
+				minWidth={1400}
+				title={<>Adicionar Produto</>}
+				isActive={isModalActive(EModals.test)}
+				closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
+			>
+				<div className="mb-4 flex flex-col gap-2">
+					<p>Registros a serem excluídos:</p>
+					<div>
+						{selectedItems.sort().map((item, index) => {
+							const comma = index >= selectedItems.length - 1 ? "" : " - ";
+
+							return (
+								<p key={index}>
+									<span className="bg-opacity-85 rounded-md border border-red-200 bg-red-200 px-2 font-bold text-zinc-800 shadow-sm">
+										{item}
+									</span>
+									<span className="text-zinc-500">{comma}</span>
+								</p>
+							);
+						})}
+					</div>
+				</div>
+				<div className="flex justify-end gap-4">
+					<RoundButton
+						text="Cancelar"
+						textColor="#dc2626"
+						paddingX={8}
+						paddingY={2}
+						borderEqualsText
+						onClick={() => setOpenedModal(EModals.test, false)}
+					/>
+					<RoundButton
+						text="Excluir"
+						textColor="#dc2626"
+						paddingX={8}
+						paddingY={2}
+						borderEqualsText
+						invertColors
+					/>
+				</div>
 			</Modal>
+			<Modal
+				modalId={EModals.deleteRegister}
+				minWidth={400}
+				title={
+					<>
+						Você tem certeza que deseja excluir{" "}
+						<span className="text-red-600">PERMANENTEMENTE</span> os registros
+						selecionados?
+					</>
+				}
+				isActive={isModalActive(EModals.deleteRegister)}
+				closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
+			>
+				<div className="mb-4 flex flex-col gap-2">
+					<p>Registros a serem excluídos:</p>
+					<div>
+						{selectedItems.sort().map((item, index) => {
+							const comma = index >= selectedItems.length - 1 ? "" : " - ";
+
+							return (
+								<p key={index}>
+									<span className="bg-opacity-85 rounded-md border border-red-200 bg-red-200 px-2 font-bold text-zinc-800 shadow-sm">
+										{item}
+									</span>
+									<span className="text-zinc-500">{comma}</span>
+								</p>
+							);
+						})}
+					</div>
+				</div>
+				<div className="flex justify-end gap-4">
+					<RoundButton
+						text="Cancelar"
+						textColor="#dc2626"
+						paddingX={8}
+						paddingY={2}
+						borderEqualsText
+						onClick={() => setOpenedModal(EModals.deleteRegister, false)}
+					/>
+					<RoundButton
+						text="Excluir"
+						textColor="#dc2626"
+						paddingX={8}
+						paddingY={2}
+						borderEqualsText
+						invertColors
+					/>
+				</div>
+			</Modal>
+
 			<main className="h-full min-h-screen w-full max-w-[1600px] bg-zinc-50 p-16 opacity-90">
 				{inventory ? (
 					<>
@@ -121,7 +241,13 @@ export default function ProductInventory({ inventory }: Props) {
 													//todo onclick modal
 												>
 													<FiTrash />
-													<p>Excluir Registros</p>
+													<p
+														onClick={() => {
+															selectedItems.length > 0 && setOpenedModal(1, true);
+														}}
+													>
+														Excluir Registros
+													</p>
 												</a>
 												<p
 													className={`select-none font-normal ${
