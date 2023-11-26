@@ -9,6 +9,7 @@ interface Props {
 	minWidth?: number;
 	minHeight?: number;
 	title?: string | React.ReactNode;
+	dontCloseOnClickOutside?: boolean;
 	children: React.ReactNode;
 	isActive: boolean;
 	closeModalHandler: (modalId: number) => void;
@@ -20,6 +21,7 @@ export default function Modal({
 	minHeight = 100,
 	title,
 	isActive,
+	dontCloseOnClickOutside = false,
 	closeModalHandler,
 	children,
 }: Props) {
@@ -28,6 +30,7 @@ export default function Modal({
 		const modalBody = modal?.querySelector(`#modalBody`);
 
 		const outsideModalClick = (event: MouseEvent) => {
+			if (dontCloseOnClickOutside) return;
 			if (modalBody) {
 				if (ModalController.getCurrentOpenModalId() === modalId) {
 					if (!modalBody.contains(event.target as Node)) {

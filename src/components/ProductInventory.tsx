@@ -1,9 +1,11 @@
 "use client";
 
 import RoundButton from "@/components/Buttons/RoundButton";
-import { useEffect, useState } from "react";
+import { HTMLInputTypeAttribute, useEffect, useState } from "react";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import Modal from "./Modals/Modal";
+import ModalDeleteRegister from "./Modals/ModalDeleteRegister";
+import ModalRegister from "./Modals/ModalRegister";
 
 export interface IInventory {
 	table: ITable;
@@ -22,7 +24,16 @@ export interface ITableDataRow {
 
 interface ITableItem {
 	display?: string;
-	value: any;
+	value: string | number;
+	formAttributes?: ITableItemFormAttributes;
+}
+
+interface ITableItemFormAttributes {
+	type: HTMLInputTypeAttribute;
+	required?: boolean;
+	maxLength?: number;
+	minLenght?: number;
+	mask?: "cpf" | "cel";
 }
 
 interface IHighlights {
@@ -42,14 +53,14 @@ interface OpenedModal {
 
 enum EModals {
 	"deleteRegister",
-	"test",
+	"registerActions",
 }
 
 export default function ProductInventory({ inventory }: Props) {
 	const [selectedItems, setSelectedItems] = useState<string[]>([]);
 	const [openedModals, setOpenedModals] = useState<OpenedModal[]>([
-		{ id: EModals.deleteRegister, isActive: true },
-		{ id: EModals.test, isActive: true },
+		{ id: EModals.deleteRegister, isActive: false },
+		{ id: EModals.registerActions, isActive: true },
 	]);
 
 	function setOpenedModal(modalId: number, isOpen: boolean): void {
@@ -102,98 +113,17 @@ export default function ProductInventory({ inventory }: Props) {
 
 	return (
 		<section className="w-full bg-zinc-100">
-			<Modal
-				modalId={EModals.test}
-				minWidth={1400}
-				title={<>Adicionar Produto</>}
-				isActive={isModalActive(EModals.test)}
-				closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
-			>
-				<div className="mb-4 flex flex-col gap-2">
-					<p>Registros a serem excluídos:</p>
-					<div>
-						{selectedItems.sort().map((item, index) => {
-							const comma = index >= selectedItems.length - 1 ? "" : " - ";
-
-							return (
-								<p key={index}>
-									<span className="bg-opacity-85 rounded-md border border-red-200 bg-red-200 px-2 font-bold text-zinc-800 shadow-sm">
-										{item}
-									</span>
-									<span className="text-zinc-500">{comma}</span>
-								</p>
-							);
-						})}
-					</div>
-				</div>
-				<div className="flex justify-end gap-4">
-					<RoundButton
-						text="Cancelar"
-						textColor="#dc2626"
-						paddingX={8}
-						paddingY={2}
-						borderEqualsText
-						onClick={() => setOpenedModal(EModals.test, false)}
-					/>
-					<RoundButton
-						text="Excluir"
-						textColor="#dc2626"
-						paddingX={8}
-						paddingY={2}
-						borderEqualsText
-						invertColors
-					/>
-				</div>
-			</Modal>
-			<Modal
+			<ModalRegister
+				modalId={EModals.registerActions}
+				isActive={isModalActive(EModals.registerActions)}
+				setOpenedModal={setOpenedModal}
+			/>
+			<ModalDeleteRegister
 				modalId={EModals.deleteRegister}
-				minWidth={400}
-				title={
-					<>
-						Você tem certeza que deseja excluir{" "}
-						<span className="text-red-600">PERMANENTEMENTE</span> os registros
-						selecionados?
-					</>
-				}
 				isActive={isModalActive(EModals.deleteRegister)}
-				closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
-			>
-				<div className="mb-4 flex flex-col gap-2">
-					<p>Registros a serem excluídos:</p>
-					<div>
-						{selectedItems.sort().map((item, index) => {
-							const comma = index >= selectedItems.length - 1 ? "" : " - ";
-
-							return (
-								<p key={index}>
-									<span className="bg-opacity-85 rounded-md border border-red-200 bg-red-200 px-2 font-bold text-zinc-800 shadow-sm">
-										{item}
-									</span>
-									<span className="text-zinc-500">{comma}</span>
-								</p>
-							);
-						})}
-					</div>
-				</div>
-				<div className="flex justify-end gap-4">
-					<RoundButton
-						text="Cancelar"
-						textColor="#dc2626"
-						paddingX={8}
-						paddingY={2}
-						borderEqualsText
-						onClick={() => setOpenedModal(EModals.deleteRegister, false)}
-					/>
-					<RoundButton
-						text="Excluir"
-						textColor="#dc2626"
-						paddingX={8}
-						paddingY={2}
-						borderEqualsText
-						invertColors
-					/>
-				</div>
-			</Modal>
+				selectedItems={selectedItems}
+				setOpenedModal={setOpenedModal}
+			/>
 
 			<main className="h-full min-h-screen w-full max-w-[1600px] bg-zinc-50 p-16 opacity-90">
 				{inventory ? (
@@ -243,7 +173,8 @@ export default function ProductInventory({ inventory }: Props) {
 													<FiTrash />
 													<p
 														onClick={() => {
-															selectedItems.length > 0 && setOpenedModal(1, true);
+															selectedItems.length > 0 &&
+																setOpenedModal(EModals.deleteRegister, true);
 														}}
 													>
 														Excluir Registros
@@ -290,7 +221,7 @@ export default function ProductInventory({ inventory }: Props) {
 													className="scale-150 border border-zinc-600"
 													type="checkbox"
 													onClick={(event) =>
-														checkboxHandler(event, row.data[0].value /* id value */)
+														checkboxHandler(event, String(row.data[0].value) /* id value */)
 													}
 												/>
 											</td>
