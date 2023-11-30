@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import RoundButton from "../Buttons/RoundButton";
 import Modal from "./Modal";
-import InputText from "../Inputs/InputText";
+import Input from "../Form/Input";
+import { RegexTemplate } from "@/utils/regex";
+import Textarea from "../Form/Textarea";
 
 interface Props {
 	modalId: number;
@@ -35,8 +36,14 @@ export default function ModalRegister({
 			closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
 			dontCloseOnClickOutside
 		>
-			<form id={"ItemForm"} className="my-4 flex flex-col gap-2">
-				<InputText inputId={"Nome"} label={"test"} regex={/[^\d]/g} />
+			<form id={"ItemForm"} className="my-4 flex flex-col gap-6">
+				<Input
+					inputId={"Nome"}
+					type={"text"}
+					label={"test"}
+					regex={RegexTemplate.Cpf}
+				/>
+				<Textarea inputId={"Descrição"} label="Descrição" />
 				{/* <div className="flex flex-col gap-1">
 					<label htmlFor="name" className="font-medium text-zinc-800">
 						Descrição:

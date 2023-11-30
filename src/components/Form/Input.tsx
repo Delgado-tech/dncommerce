@@ -1,15 +1,27 @@
 "use client";
 
 import { IToggleClass, cssToggleClasses } from "@/utils/cssToggleClasses";
-import { useEffect, useRef } from "react";
+import { HTMLInputTypeAttribute, useEffect, useRef } from "react";
 
 interface Props {
 	inputId: string;
+	type: HTMLInputTypeAttribute;
 	label: string;
-	regex?: RegExp;
+	minLength?: number;
+	maxLength?: number;
+	required?: boolean;
+	regex?: (value: string) => string;
 }
 
-export default function InputText({ inputId, label, regex }: Props) {
+export default function Input({
+	inputId,
+	type,
+	label,
+	minLength,
+	maxLength,
+	required,
+	regex,
+}: Props) {
 	const inputBodyRef = useRef<HTMLDivElement>(null);
 
 	const labelTC: IToggleClass[] = [
@@ -23,6 +35,7 @@ export default function InputText({ inputId, label, regex }: Props) {
 		const labelElement = inputBodyRef.current?.querySelector("label");
 
 		function toggleLabelClasses() {
+			console.log(3);
 			if (labelElement && inputElement) {
 				let toggleConditional = false;
 				if (inputElement.value.length === 0) toggleConditional = true;
@@ -33,22 +46,22 @@ export default function InputText({ inputId, label, regex }: Props) {
 
 		const inputFocusIn = () => toggleLabelClasses();
 		const inputFocusOut = () => toggleLabelClasses();
-		const inputt = (event: Event) => {
+		const inputEvent = (event: Event) => {
 			if (regex) {
 				const target = event.target as HTMLInputElement;
-				target.value = target.value.replace(regex, "");
+				target.value = regex(target.value);
 			}
 		};
 
 		if (inputElement) {
 			inputElement.addEventListener("focusin", inputFocusIn);
 			inputElement.addEventListener("focusout", inputFocusOut);
-			inputElement.addEventListener("input", inputt);
+			inputElement.addEventListener("input", inputEvent);
 		}
 
 		return () => {
 			if (inputElement) {
-				inputElement.removeEventListener("input", inputt);
+				inputElement.removeEventListener("input", inputEvent);
 				inputElement.removeEventListener("focusin", inputFocusIn);
 				inputElement.removeEventListener("focusout", inputFocusOut);
 			}
@@ -64,10 +77,13 @@ export default function InputText({ inputId, label, regex }: Props) {
 				{label}
 			</label>
 			<input
-				type="text"
+				type={type}
 				className="rounded-md border border-zinc-400 px-3 py-2 outline-none focus:border-sky-400"
 				id={inputId}
 				name={inputId}
+				minLength={minLength}
+				maxLength={maxLength}
+				required={required}
 			/>
 		</div>
 	);
