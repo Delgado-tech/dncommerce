@@ -25,7 +25,7 @@ export default function Input({
 	const inputBodyRef = useRef<HTMLDivElement>(null);
 
 	const labelTC: IToggleClass[] = [
-		{ firstClass: "top-[9px]", secondClass: "-top-[11px]", conditional: true },
+		{ firstClass: "top-[9px]", secondClass: "-top-[12px]", conditional: true },
 		{ firstClass: "text-base", secondClass: "text-sm", conditional: true },
 		{ firstClass: "text-zinc-600", secondClass: "text-sky-400" },
 	];
@@ -72,7 +72,7 @@ export default function Input({
 		<div ref={inputBodyRef} className="relative flex flex-col gap-1">
 			<label
 				htmlFor={inputId}
-				className="absolute left-[9px] top-[9px] select-none bg-white px-1 text-base font-medium text-zinc-600 transition-all"
+				className="absolute left-[9px] top-[9px] select-none rounded-md bg-white px-1 text-base font-medium text-zinc-600 transition-all"
 			>
 				{label}
 			</label>

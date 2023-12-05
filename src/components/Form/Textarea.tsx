@@ -9,6 +9,7 @@ interface Props {
 	rows?: number;
 	minLength?: number;
 	maxLength?: number;
+	maxLengthDisplay?: boolean;
 	required?: boolean;
 	regex?: (value: string) => string;
 }
@@ -19,13 +20,14 @@ export default function Textarea({
 	rows = 4,
 	minLength,
 	maxLength,
+	maxLengthDisplay = true,
 	required,
 	regex,
 }: Props) {
 	const textareaBodyRef = useRef<HTMLDivElement>(null);
 
 	const labelTC: IToggleClass[] = [
-		{ firstClass: "top-[9px]", secondClass: "-top-[11px]", conditional: true },
+		{ firstClass: "top-[9px]", secondClass: "-top-[12px]", conditional: true },
 		{ firstClass: "text-base", secondClass: "text-sm", conditional: true },
 		{ firstClass: "text-zinc-600", secondClass: "text-sky-400" },
 	];
@@ -37,6 +39,7 @@ export default function Textarea({
 	useEffect(() => {
 		const textareaElement = textareaBodyRef.current?.querySelector("textarea");
 		const labelElement = textareaBodyRef.current?.querySelector("label");
+		const spanElement = textareaBodyRef.current?.querySelector("span");
 
 		function toggleLabelClasses() {
 			if (labelElement && textareaElement) {
@@ -51,9 +54,13 @@ export default function Textarea({
 		const inputFocusIn = () => toggleLabelClasses();
 		const inputFocusOut = () => toggleLabelClasses();
 		const inputEvent = (event: Event) => {
+			const target = event.target as HTMLInputElement;
 			if (regex) {
-				const target = event.target as HTMLInputElement;
 				target.value = regex(target.value);
+			}
+
+			if (spanElement && maxLength && maxLengthDisplay) {
+				spanElement.textContent = String(maxLength - target.value.length);
 			}
 		};
 
@@ -79,7 +86,7 @@ export default function Textarea({
 		>
 			<label
 				htmlFor={inputId}
-				className="absolute left-[9px] top-[9px] select-none bg-white px-1 text-base font-medium text-zinc-600 transition-all"
+				className="absolute left-[9px] top-[9px] select-none rounded-md bg-white px-1 text-base font-medium text-zinc-600 transition-all"
 			>
 				{label}
 			</label>
@@ -92,6 +99,11 @@ export default function Textarea({
 				maxLength={maxLength}
 				required={required}
 			></textarea>
+			{maxLengthDisplay && (
+				<span className="px-2 py-1 text-right text-sm text-zinc-600">
+					{maxLength}
+				</span>
+			)}
 		</div>
 	);
 }

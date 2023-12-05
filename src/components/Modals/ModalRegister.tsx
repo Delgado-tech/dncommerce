@@ -43,7 +43,7 @@ export default function ModalRegister({
 					label={"test"}
 					regex={RegexTemplate.Cpf}
 				/>
-				<Textarea inputId={"Descrição"} label="Descrição" />
+				<Textarea inputId={"Descrição"} label="Descrição" maxLength={10} />
 				{/* <div className="flex flex-col gap-1">
 					<label htmlFor="name" className="font-medium text-zinc-800">
 						Descrição:

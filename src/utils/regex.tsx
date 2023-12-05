@@ -46,7 +46,17 @@ export class RegexTemplate {
 		value = value.substring(0, 15);
 		value = value.replace(/\D/g, "");
 		value = value.replace(/(\d{2})(\d)/, "($1) $2");
-		value = value.replace(/(\d{5})(\d)/, "$1-$2");
+		value = value.replace(/(\d{5})(\d)$/, "$1-$2");
+
+		return value;
+	}
+
+	static Date(value: string): string {
+		value = value.substring(0, 10);
+		value = value.replace(/\D/g, "");
+		value = value.replace(/(\d{2})(\d)/, "$1/$2");
+		value = value.replace(/(\d{2})(\d)/, "$1/$2");
+		value = value.replace(/(\d{4})(\d)$/, "$1/$2");
 
 		return value;
 	}
