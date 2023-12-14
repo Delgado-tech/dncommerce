@@ -1,3 +1,8 @@
+export interface OpenedModal {
+	id: number;
+	isActive: boolean;
+}
+
 export class ModalController {
 	private static openedModals: number[] = [];
 

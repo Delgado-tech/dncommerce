@@ -1,11 +1,6 @@
-import RoundButton from "@/components/Buttons/RoundButton";
-import ProductInventory, {
-	IInventory,
-	ITableDataRow,
-} from "@/components/ProductInventory";
 import { DncommerceApiClient as API } from "@/services/dncommerce-api";
-import { toBRL } from "@/utils/toBRL";
 import { Metadata } from "next";
+import ProductInventory from "../../../../components/ProductInventory";
 
 export const metadata: Metadata = {
 	title: "Panel - Products",
@@ -14,49 +9,5 @@ export const metadata: Metadata = {
 
 export default async function ProductsPanel() {
 	const products = await API.Products.Instance().get();
-
-	const headers: string[] = [
-		"Id",
-		"Nome",
-		"Descrição",
-		"Preço",
-		"Desconto atual",
-		"Preço com desconto",
-		"Estoque",
-	];
-
-	const rows = products.map((product, index) => {
-		const price = product.price ?? 0;
-		const discount = product.discount ?? 0;
-
-		return {
-			data: [
-				{ value: product.id },
-				{ value: product.name },
-				{ value: product.description },
-				{
-					value: price,
-					display: toBRL(price),
-				},
-				{
-					value: discount,
-					display: `${(Math.round(discount * 100) / 100).toFixed(2)}%`,
-				},
-				{
-					value: price - (price * discount) / 100,
-					display: toBRL(price - (price * discount) / 100),
-				},
-				{ value: product.stock },
-			],
-		} as ITableDataRow;
-	});
-
-	const inventory: IInventory = {
-		table: {
-			headers,
-			rows,
-		},
-	};
-
-	return <ProductInventory inventory={inventory} />;
+	return <ProductInventory data={products} />;
 }

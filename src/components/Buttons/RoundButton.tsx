@@ -16,6 +16,7 @@ interface Props {
 	paddingY?: number;
 	borderEqualsText?: boolean;
 	invertColors?: boolean;
+	disabled?: boolean;
 }
 
 export default function RoundButton({
@@ -31,9 +32,17 @@ export default function RoundButton({
 	paddingY = 3,
 	borderEqualsText,
 	invertColors,
+	disabled = false,
 }: Props) {
 	if (borderEqualsText) {
 		borderColor = textColor;
+	}
+
+	if (disabled) {
+		bgColor = "#71717a";
+		textColor = "white";
+		borderColor = "transparent";
+		invertColors = false;
 	}
 
 	if (invertColors) {
@@ -51,7 +60,7 @@ export default function RoundButton({
 		<Link href={href ?? "#"}>
 			<button
 				onClick={() => onClick()}
-				className={`flex select-none items-center gap-2 rounded-full transition-all hover:scale-105 hover:shadow-sm hover:brightness-110`}
+				className={`flex cursor-pointer select-none items-center gap-2 rounded-full transition-all hover:scale-105 hover:shadow-sm hover:brightness-110 disabled:cursor-not-allowed`}
 				style={{
 					backgroundColor: bgColor,
 					color: textColor,
@@ -59,6 +68,7 @@ export default function RoundButton({
 					borderColor: borderColor,
 					padding: `${paddingY / 4}rem ${paddingX / 4}rem`,
 				}}
+				disabled={disabled}
 			>
 				{text && <p>{text}</p>}
 				{icon}
