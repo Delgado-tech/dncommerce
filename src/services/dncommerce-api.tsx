@@ -25,7 +25,7 @@ export namespace DncommerceApiClient {
 
 	type ObjectBody = IUser | IProduct;
 
-	abstract class HTTPRequests {
+	export abstract class HTTPRequests {
 		abstract get(): Promise<ObjectBody[]>;
 		abstract getId(id: string): ObjectBody;
 		abstract create(body: ObjectBody): void;

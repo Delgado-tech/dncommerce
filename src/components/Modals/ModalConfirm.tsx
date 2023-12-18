@@ -14,7 +14,7 @@ interface Props {
 
 interface ICtaOptions {
 	text: string;
-	action: () => void;
+	action: ((event: MouseEvent) => void) | (() => void);
 	color?: string;
 }
 

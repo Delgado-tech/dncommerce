@@ -5,9 +5,11 @@ import { HTMLInputTypeAttribute, useEffect, useState } from "react";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import Modal from "./Modals/Modal";
 import ModalDeleteRegister from "./Modals/ModalDeleteRegisters";
-import ModalRegister from "./Modals/ModalRegister";
+import ModalUpdateRegister from "./Modals/ModalUpdateRegister";
 import { RegexFunctionType, RegexTemplate } from "@/utils/regex";
 import { OpenedModal } from "@/controllers/modalController";
+import ModalCreateRegister from "./Modals/ModalCreateRegister";
+import { DncommerceApiClient } from "@/services/dncommerce-api";
 
 export interface IInventory {
 	table: ITable;
@@ -39,6 +41,7 @@ interface ITableItemFormAttributes {
 	minLength?: number;
 	maxLength?: number;
 	maxLengthDisplay?: boolean;
+	defaultValue?: string | number;
 	regex?: RegexFunctionType;
 }
 
@@ -55,7 +58,9 @@ interface Props {
 export enum EModals {
 	"deleteRegisters",
 	"deleteRegister",
-	"saveRegister",
+	"confirmSaveRegister",
+	"confirmCreateRegister",
+	"createRegister",
 	"registerActions",
 }
 
@@ -65,8 +70,10 @@ export default function Inventory({ inventory }: Props) {
 	const [openedModals, setOpenedModals] = useState<OpenedModal[]>([
 		{ id: EModals.deleteRegisters, isActive: false },
 		{ id: EModals.deleteRegister, isActive: false },
-		{ id: EModals.registerActions, isActive: true },
-		{ id: EModals.saveRegister, isActive: false },
+		{ id: EModals.confirmSaveRegister, isActive: false },
+		{ id: EModals.confirmCreateRegister, isActive: false },
+		{ id: EModals.createRegister, isActive: false },
+		{ id: EModals.registerActions, isActive: false },
 	]);
 
 	function setOpenedModal(modalId: number, isOpen: boolean): void {
@@ -119,7 +126,14 @@ export default function Inventory({ inventory }: Props) {
 
 	return (
 		<section className="w-full bg-zinc-100">
-			<ModalRegister
+			<ModalCreateRegister
+				modalId={EModals.createRegister}
+				isActive={isModalActive(EModals.createRegister)}
+				setOpenedModal={setOpenedModal}
+				isModalActive={isModalActive}
+				row={rows[clickedItemId || 0]}
+			/>
+			<ModalUpdateRegister
 				modalId={EModals.registerActions}
 				isActive={isModalActive(EModals.registerActions)}
 				setOpenedModal={setOpenedModal}
@@ -140,7 +154,12 @@ export default function Inventory({ inventory }: Props) {
 							<h1 className="text-2xl font-medium text-zinc-600">
 								Inventário de Produtos
 							</h1>
-							<RoundButton text="Adicionar Produto" icon={<FiPlus />} invertColors />
+							<RoundButton
+								text="Adicionar Produto"
+								icon={<FiPlus />}
+								onClick={() => setOpenedModal(EModals.createRegister, true)}
+								invertColors
+							/>
 						</header>
 
 						<section className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-10">

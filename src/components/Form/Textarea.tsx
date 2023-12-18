@@ -2,8 +2,8 @@
 
 import { IToggleClass, cssToggleClasses } from "@/utils/cssToggleClasses";
 import { RegexFunctionType } from "@/utils/regex";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { setInvalidInputIdFunc } from "../Modals/ModalRegister";
+import { useEffect, useRef, useState } from "react";
+import { setInvalidInputIdFunc } from "../Modals/ModalUpdateRegister";
 
 interface Props {
 	inputId: string;
@@ -41,13 +41,7 @@ export default function Textarea({
 		{ firstClass: "text-zinc-600", secondClass: "text-sky-400" },
 	];
 
-	const textareaTC: IToggleClass[] = [
-		{ firstClass: "border-zinc-400", secondClass: "border-sky-400" },
-	];
-
 	useEffect(() => {
-		if (disabled) return;
-
 		const textareaElement = textareaBodyRef.current?.querySelector("textarea");
 		const labelElement = textareaBodyRef.current?.querySelector("label");
 		const spanElement = textareaBodyRef.current?.querySelector(".lengthDisplay");
@@ -67,10 +61,6 @@ export default function Textarea({
 		};
 
 		const inputFocusOut = () => {
-			textareaBodyRef.current?.style.setProperty(
-				"border-color",
-				invalidData ? "#f87171" : "#a1a1aa",
-			);
 			toggleLabelClasses();
 		};
 
@@ -116,6 +106,10 @@ export default function Textarea({
 
 		if (textareaBodyRef.current) {
 			textareaBodyRef.current.addEventListener("click", bodyClick);
+			textareaBodyRef.current.style.setProperty(
+				"border-color",
+				invalidData && !disabled ? "#f87171" : "#a1a1aa",
+			);
 		}
 
 		return () => {
@@ -179,7 +173,7 @@ export default function Textarea({
 					</span>
 				)}
 			</div>
-			{invalidData && (
+			{invalidData && !disabled && (
 				<p className="text-end text-sm text-red-400">min: 3 caracteres</p>
 			)}
 		</div>

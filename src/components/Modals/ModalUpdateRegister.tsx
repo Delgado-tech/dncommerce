@@ -23,7 +23,7 @@ export type setInvalidInputIdFunc = (
 	pushCondition: boolean,
 ) => void;
 
-export default function ModalRegister({
+export default function ModalUpdateRegister({
 	modalId,
 	isActive,
 	row,
@@ -54,7 +54,7 @@ export default function ModalRegister({
 	}
 
 	function closeEditMode() {
-		setOpenedModal(EModals.saveRegister, false);
+		setOpenedModal(EModals.confirmSaveRegister, false);
 		setReadOnly(true);
 	}
 
@@ -158,7 +158,7 @@ export default function ModalRegister({
 							borderEqualsText
 							onClick={() => {
 								if (!readOnly) {
-									setOpenedModal(EModals.saveRegister, true);
+									setOpenedModal(EModals.confirmSaveRegister, true);
 								} else {
 									setReadOnly(false);
 								}
@@ -170,8 +170,8 @@ export default function ModalRegister({
 				</form>
 			</Modal>
 			<ModalConfirm
-				isActive={isModalActive(EModals.saveRegister)}
-				modalId={EModals.saveRegister}
+				isActive={isModalActive(EModals.confirmSaveRegister)}
+				modalId={EModals.confirmSaveRegister}
 				title={"Você tem CERTEZA que deseja salvar as alterações feitas?"}
 				setOpenedModal={setOpenedModal}
 				cancelCta={{

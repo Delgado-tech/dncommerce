@@ -1,7 +1,10 @@
 "use client";
 
 import Inventory, { IInventory, ITableDataRow } from "@/components/Inventory";
-import { DncommerceApiClient as API } from "@/services/dncommerce-api";
+import {
+	DncommerceApiClient as API,
+	DncommerceApiClient,
+} from "@/services/dncommerce-api";
 import { RegexTemplate } from "@/utils/regex";
 import { toBRL } from "@/utils/toBRL";
 

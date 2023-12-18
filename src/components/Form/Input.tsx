@@ -10,7 +10,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { setInvalidInputIdFunc } from "../Modals/ModalRegister";
+import { setInvalidInputIdFunc } from "../Modals/ModalUpdateRegister";
 
 interface Props {
 	inputId: string;

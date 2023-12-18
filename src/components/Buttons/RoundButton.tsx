@@ -16,6 +16,7 @@ interface Props {
 	paddingY?: number;
 	borderEqualsText?: boolean;
 	invertColors?: boolean;
+	typeSubmit?: boolean;
 	disabled?: boolean;
 }
 
