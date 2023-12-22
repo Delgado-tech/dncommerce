@@ -27,7 +27,7 @@ interface Props {
 
 export default function Input({
 	inputId,
-	value,
+	value = "",
 	type = "text",
 	label = inputId,
 	minLength,
@@ -47,10 +47,16 @@ export default function Input({
 	];
 
 	useEffect(() => {
-		if (disabled) return;
-
 		const inputElement = inputBodyRef.current?.querySelector("input");
 		const labelElement = inputBodyRef.current?.querySelector("label");
+		const spanElement = inputBodyRef.current?.querySelector(
+			".trace",
+		) as HTMLSpanElement;
+
+		if (value.length > 0) {
+			labelElement?.classList.remove("top-[9px]", "text-base");
+			labelElement?.classList.add("-top-[12px]", "text-sm");
+		}
 
 		function toggleLabelClasses() {
 			if (labelElement && inputElement) {
@@ -61,8 +67,16 @@ export default function Input({
 			}
 		}
 
-		const inputFocusIn = () => toggleLabelClasses();
-		const inputFocusOut = () => toggleLabelClasses();
+		const inputFocusIn = () => {
+			spanElement.style.setProperty("--tw-bg-opacity", "1");
+			toggleLabelClasses();
+		};
+
+		const inputFocusOut = () => {
+			spanElement.style.setProperty("--tw-bg-opacity", "0");
+			toggleLabelClasses();
+		};
+
 		const inputEvent = (event: Event) => {
 			const target = event.target as HTMLInputElement;
 
@@ -100,6 +114,11 @@ export default function Input({
 		if (inputElement) {
 			inputElement.value = value || "";
 		}
+
+		if (disabled && setInvalidInputId) {
+			setInvalidData(false);
+			setInvalidInputId(inputId, false);
+		}
 	}, [disabled, value]);
 
 	return (
@@ -111,10 +130,9 @@ export default function Input({
 				} left-[9px] select-none rounded-md px-1 font-medium text-zinc-600 transition-all`}
 			>
 				<span
-					className={`relative z-[1] before:absolute before:-left-1 before:top-[11px]
-						before:z-[-1] before:h-[1px] before:w-[calc(100%+0.5rem)] ${
-							value && "before:bg-white"
-						} before:content-['_']`}
+					className={`trace relative z-[1] before:absolute before:-left-1 before:top-[11px]
+						before:z-[-1] before:h-[1px] before:w-[calc(100%+0.5rem)] before:bg-white
+						before:content-['_']`}
 				>
 					{label}
 				</span>

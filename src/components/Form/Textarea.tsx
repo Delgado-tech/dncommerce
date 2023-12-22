@@ -21,7 +21,7 @@ interface Props {
 
 export default function Textarea({
 	inputId,
-	value,
+	value = "",
 	label = inputId,
 	rows = 4,
 	minLength,
@@ -44,7 +44,16 @@ export default function Textarea({
 	useEffect(() => {
 		const textareaElement = textareaBodyRef.current?.querySelector("textarea");
 		const labelElement = textareaBodyRef.current?.querySelector("label");
-		const spanElement = textareaBodyRef.current?.querySelector(".lengthDisplay");
+		const lengthDisplayElement =
+			textareaBodyRef.current?.querySelector(".lengthDisplay");
+		const spanElement = textareaBodyRef.current?.querySelector(
+			".trace",
+		) as HTMLSpanElement;
+
+		if (value.length > 0) {
+			labelElement?.classList.remove("top-[9px]", "text-base");
+			labelElement?.classList.add("-top-[12px]", "text-sm");
+		}
 
 		function toggleLabelClasses() {
 			if (labelElement && textareaElement) {
@@ -57,10 +66,12 @@ export default function Textarea({
 
 		const inputFocusIn = () => {
 			textareaBodyRef.current?.style.setProperty("border-color", "#38bdf8");
+			spanElement.style.setProperty("--tw-bg-opacity", "1");
 			toggleLabelClasses();
 		};
 
 		const inputFocusOut = () => {
+			spanElement.style.setProperty("--tw-bg-opacity", "0");
 			toggleLabelClasses();
 		};
 
@@ -71,8 +82,8 @@ export default function Textarea({
 				target.value = regex(target.value);
 			}
 
-			if (spanElement && maxLength && maxLengthDisplay) {
-				spanElement.textContent = String(maxLength - target.value.length);
+			if (lengthDisplayElement && maxLength && maxLengthDisplay) {
+				lengthDisplayElement.textContent = String(maxLength - target.value.length);
 			}
 			if (minLength) {
 				setInvalidData(target.value.length < minLength);
@@ -129,6 +140,11 @@ export default function Textarea({
 		if (textareaElement) {
 			textareaElement.value = value || "";
 		}
+
+		if (disabled && setInvalidInputId) {
+			setInvalidData(false);
+			setInvalidInputId(inputId, false);
+		}
 	}, [disabled, value]);
 
 	return (
@@ -148,10 +164,8 @@ export default function Textarea({
 					} left-[9px] select-none rounded-md px-1 font-medium text-zinc-600 transition-all`}
 				>
 					<span
-						className={`relative z-[1] before:absolute before:-left-1 before:top-[10px]
-						before:z-[-1] before:h-[1px] before:w-[calc(100%+0.5rem)] ${
-							value && "before:bg-white"
-						} before:content-['_']`}
+						className={`trace relative z-[1] before:absolute before:-left-1 before:top-[10px]
+						before:z-[-1] before:h-[1px] before:w-[calc(100%+0.5rem)] before:bg-white before:content-['_']`}
 					>
 						{label}
 					</span>

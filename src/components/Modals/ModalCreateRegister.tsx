@@ -17,6 +17,7 @@ interface Props {
 	row?: ITableDataRow;
 	setOpenedModal: (modalId: number, isOpen: boolean) => void;
 	isModalActive: (modalId: number) => boolean;
+	apiInstance: DncommerceApiClient.HTTPRequests;
 }
 
 export type setInvalidInputIdFunc = (
@@ -24,23 +25,35 @@ export type setInvalidInputIdFunc = (
 	pushCondition: boolean,
 ) => void;
 
+class invalidInputsIdController {
+	static invalidInputsId: string[] = [];
+	static add(inputId: string) {
+		this.invalidInputsId.push(inputId);
+	}
+	static remove(inputId: string) {
+		this.invalidInputsId = this.invalidInputsId.filter(
+			(value) => value !== inputId,
+		);
+	}
+}
+
 export default function ModalCreateRegister({
 	modalId,
 	isActive,
 	row,
 	setOpenedModal,
 	isModalActive,
+	apiInstance,
 }: Props) {
 	const [invalidInputsId, setInvalidInputsId] = useState<string[]>([]);
 	const formRef = useRef<HTMLFormElement>(null);
 	const submitButtonRef = useRef<HTMLInputElement>(null);
 
 	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		alert(1);
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
-		console.log(formObj);
+		apiInstance.create(formObj);
 	};
 
 	useEffect(() => {
@@ -49,17 +62,12 @@ export default function ModalCreateRegister({
 
 	function setInvalidInputId(inputId: string, pushCondition: boolean) {
 		if (invalidInputsId) {
-			const index = invalidInputsId.findIndex((value) => value === inputId);
-
-			if (index > -1) {
-				invalidInputsId.splice(index, 1);
-			}
-
+			invalidInputsIdController.remove(inputId);
 			if (pushCondition) {
-				invalidInputsId.push(inputId);
+				invalidInputsIdController.add(inputId);
 			}
 
-			setInvalidInputsId(invalidInputsId.map((value) => value));
+			setInvalidInputsId(invalidInputsIdController.invalidInputsId);
 		}
 	}
 

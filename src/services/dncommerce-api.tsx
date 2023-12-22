@@ -46,7 +46,7 @@ export namespace DncommerceApiClient {
 		getId(id: string): IUser {
 			throw new Error("Method not implemented.");
 		}
-		create(body: IUser): void {
+		async create(body: IUser): Promise<void> {
 			throw new Error("Method not implemented.");
 		}
 		update(id: string, body: IUser): void {
@@ -73,8 +73,17 @@ export namespace DncommerceApiClient {
 		getId(id: string): IProduct {
 			throw new Error("Method not implemented.");
 		}
-		create(body: IProduct): void {
-			throw new Error("Method not implemented.");
+		async create(body: IProduct): Promise<void> {
+			console.log(body);
+			await axios
+				.post(`${url}/products?${token}`, body)
+				.then((res) => {
+					console.log(res);
+				})
+				.catch((res) => {
+					console.log(res);
+				});
+			//throw new Error("Method not implemented.");
 		}
 		update(id: string, body: IProduct): void {
 			throw new Error("Method not implemented.");

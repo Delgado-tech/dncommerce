@@ -53,6 +53,7 @@ interface IHighlights {
 
 interface Props {
 	inventory?: IInventory;
+	apiInstance: DncommerceApiClient.HTTPRequests;
 }
 
 export enum EModals {
@@ -64,7 +65,7 @@ export enum EModals {
 	"registerActions",
 }
 
-export default function Inventory({ inventory }: Props) {
+export default function Inventory({ inventory, apiInstance }: Props) {
 	const [selectedItems, setSelectedItems] = useState<string[]>([]);
 	const [clickedItemId, setClickedItemId] = useState<number>();
 	const [openedModals, setOpenedModals] = useState<OpenedModal[]>([
@@ -132,6 +133,7 @@ export default function Inventory({ inventory }: Props) {
 				setOpenedModal={setOpenedModal}
 				isModalActive={isModalActive}
 				row={rows[clickedItemId || 0]}
+				apiInstance={apiInstance}
 			/>
 			<ModalUpdateRegister
 				modalId={EModals.registerActions}

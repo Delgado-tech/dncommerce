@@ -55,6 +55,7 @@ export default function ProductInventory({ data }: Props) {
 						inputId: "price",
 						type: "text",
 						regex: RegexTemplate.Decimal,
+						defaultValue: "0.00",
 					},
 				},
 				{
@@ -64,12 +65,14 @@ export default function ProductInventory({ data }: Props) {
 						inputId: "discount",
 						type: "text",
 						regex: RegexTemplate.Decimal,
+						defaultValue: "0.00",
 					},
 				},
 				{
 					value: price - (price * discount) / 100,
 					display: toBRL(price - (price * discount) / 100),
 					formAttributes: undefined,
+					defaultValue: "0.00",
 				},
 				{
 					value: product.stock,
@@ -77,6 +80,7 @@ export default function ProductInventory({ data }: Props) {
 						inputId: "stock",
 						type: "text",
 						regex: RegexTemplate.Numbers,
+						defaultValue: "0",
 					},
 				},
 			],
@@ -90,5 +94,10 @@ export default function ProductInventory({ data }: Props) {
 		},
 	};
 
-	return <Inventory inventory={inventory} />;
+	return (
+		<Inventory
+			inventory={inventory}
+			apiInstance={DncommerceApiClient.Products.Instance()}
+		/>
+	);
 }
