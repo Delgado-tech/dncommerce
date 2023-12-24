@@ -7,12 +7,25 @@ import {
 } from "@/services/dncommerce-api";
 import { RegexTemplate } from "@/utils/regex";
 import { toBRL } from "@/utils/toBRL";
+import { useEffect, useState } from "react";
 
 interface Props {
-	data: API.IProduct[];
+	initialData?: API.IProduct[];
 }
 
-export default function ProductInventory({ data }: Props) {
+export default function ProductInventory({ initialData }: Props) {
+	const [data, setData] = useState<DncommerceApiClient.IProduct[]>(
+		initialData || [],
+	);
+
+	const [dataUpdater, setDataUpdater] = useState<boolean>(false);
+
+	useEffect(() => {
+		API.Products.Instance()
+			.get()
+			.then((res) => setData(res));
+	}, [dataUpdater]);
+
 	const headers: string[] = [
 		"Id",
 		"Nome",
@@ -98,6 +111,7 @@ export default function ProductInventory({ data }: Props) {
 		<Inventory
 			inventory={inventory}
 			apiInstance={DncommerceApiClient.Products.Instance()}
+			dataUpdater={setDataUpdater}
 		/>
 	);
 }

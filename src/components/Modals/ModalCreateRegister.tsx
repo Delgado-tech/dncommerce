@@ -6,7 +6,7 @@ import Input from "../Form/Input";
 import { RegexTemplate } from "@/utils/regex";
 import Textarea from "../Form/Textarea";
 import { EModals, ITableDataRow } from "../Inventory";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import ModalConfirm from "./ModalConfirm";
 import { OpenedModal } from "@/controllers/modalController";
 import { DncommerceApiClient } from "@/services/dncommerce-api";
@@ -17,6 +17,7 @@ interface Props {
 	row?: ITableDataRow;
 	setOpenedModal: (modalId: number, isOpen: boolean) => void;
 	isModalActive: (modalId: number) => boolean;
+	dataUpdater: Dispatch<SetStateAction<boolean>>;
 	apiInstance: DncommerceApiClient.HTTPRequests;
 }
 
@@ -43,22 +44,28 @@ export default function ModalCreateRegister({
 	row,
 	setOpenedModal,
 	isModalActive,
+	dataUpdater,
 	apiInstance,
 }: Props) {
 	const [invalidInputsId, setInvalidInputsId] = useState<string[]>([]);
 	const formRef = useRef<HTMLFormElement>(null);
 	const submitButtonRef = useRef<HTMLInputElement>(null);
 
+	const [te, sette] = useState(false);
+
 	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
-		apiInstance.create(formObj);
+		apiInstance.create(formObj).then(() => {
+			dataUpdater((u) => !u);
+			setOpenedModal(modalId, false);
+		});
 	};
 
 	useEffect(() => {
 		console.log(invalidInputsId);
-	}, [invalidInputsId]);
+	}, [invalidInputsId, te]);
 
 	function setInvalidInputId(inputId: string, pushCondition: boolean) {
 		if (invalidInputsId) {
@@ -90,7 +97,10 @@ export default function ModalCreateRegister({
 					</>
 				}
 				isActive={isActive}
-				closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
+				closeModalHandler={(modalId: number) => {
+					setOpenedModal(modalId, false);
+					sette((u) => !u);
+				}}
 				dontCloseOnClickOutside
 			>
 				<form
@@ -113,6 +123,7 @@ export default function ModalCreateRegister({
 										regex={data.formAttributes.regex}
 										required={data.formAttributes.required}
 										setInvalidInputId={setInvalidInputId}
+										reload={te}
 										key={index}
 									/>
 								);

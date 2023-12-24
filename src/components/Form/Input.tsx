@@ -58,6 +58,15 @@ export default function Input({
 			labelElement?.classList.add("-top-[12px]", "text-sm");
 		}
 
+		if (inputElement && minLength) {
+			setInvalidData(inputElement.value.length < minLength);
+
+			if (setInvalidInputId) {
+				const isInvalid = inputElement.value.length < minLength;
+				setInvalidInputId(inputId, isInvalid);
+			}
+		}
+
 		function toggleLabelClasses() {
 			if (labelElement && inputElement) {
 				let toggleConditional = false;

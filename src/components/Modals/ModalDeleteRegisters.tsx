@@ -1,12 +1,17 @@
+import { Dispatch, SetStateAction } from "react";
 import RoundButton from "../Buttons/RoundButton";
 import Modal from "./Modal";
 import ModalConfirm from "./ModalConfirm";
+import { DncommerceApiClient } from "@/services/dncommerce-api";
 
 interface Props {
 	modalId: number;
-	selectedItems: string[];
 	isActive: boolean;
+	selectedItems: string[];
 	setOpenedModal: (modalId: number, isOpen: boolean) => void;
+	setSelectedItems: Dispatch<SetStateAction<string[]>>;
+	dataUpdater: Dispatch<SetStateAction<boolean>>;
+	apiInstance: DncommerceApiClient.HTTPRequests;
 }
 
 export default function ModalDeleteRegisters({
@@ -14,7 +19,23 @@ export default function ModalDeleteRegisters({
 	selectedItems,
 	isActive,
 	setOpenedModal,
+	setSelectedItems,
+	dataUpdater,
+	apiInstance,
 }: Props) {
+	function deleteItems() {
+		selectedItems.map((item, index) =>
+			apiInstance.delete(item).then(() => {
+				dataUpdater((u) => !u);
+
+				if (selectedItems.length >= index) {
+					setSelectedItems([]);
+					setOpenedModal(modalId, false);
+				}
+			}),
+		);
+	}
+
 	return (
 		<ModalConfirm
 			modalId={modalId}
@@ -46,7 +67,7 @@ export default function ModalDeleteRegisters({
 			confirmCta={{
 				text: "Excluir",
 				color: "#dc2626",
-				action: () => {},
+				action: () => deleteItems(),
 			}}
 			cancelCta={{
 				text: "Cancelar",

@@ -1,7 +1,13 @@
 "use client";
 
 import RoundButton from "@/components/Buttons/RoundButton";
-import { HTMLInputTypeAttribute, useEffect, useState } from "react";
+import {
+	Dispatch,
+	HTMLInputTypeAttribute,
+	SetStateAction,
+	useEffect,
+	useState,
+} from "react";
 import { FiPlus, FiTrash } from "react-icons/fi";
 import Modal from "./Modals/Modal";
 import ModalDeleteRegister from "./Modals/ModalDeleteRegisters";
@@ -53,6 +59,7 @@ interface IHighlights {
 
 interface Props {
 	inventory?: IInventory;
+	dataUpdater: Dispatch<SetStateAction<boolean>>;
 	apiInstance: DncommerceApiClient.HTTPRequests;
 }
 
@@ -65,7 +72,11 @@ export enum EModals {
 	"registerActions",
 }
 
-export default function Inventory({ inventory, apiInstance }: Props) {
+export default function Inventory({
+	inventory,
+	dataUpdater,
+	apiInstance,
+}: Props) {
 	const [selectedItems, setSelectedItems] = useState<string[]>([]);
 	const [clickedItemId, setClickedItemId] = useState<number>();
 	const [openedModals, setOpenedModals] = useState<OpenedModal[]>([
@@ -134,6 +145,7 @@ export default function Inventory({ inventory, apiInstance }: Props) {
 				isModalActive={isModalActive}
 				row={rows[clickedItemId || 0]}
 				apiInstance={apiInstance}
+				dataUpdater={dataUpdater}
 			/>
 			<ModalUpdateRegister
 				modalId={EModals.registerActions}
@@ -147,6 +159,9 @@ export default function Inventory({ inventory, apiInstance }: Props) {
 				isActive={isModalActive(EModals.deleteRegisters)}
 				selectedItems={selectedItems}
 				setOpenedModal={setOpenedModal}
+				setSelectedItems={setSelectedItems}
+				apiInstance={apiInstance}
+				dataUpdater={dataUpdater}
 			/>
 
 			<main className="h-full min-h-screen w-full max-w-[1600px] bg-zinc-50 p-16 opacity-90">

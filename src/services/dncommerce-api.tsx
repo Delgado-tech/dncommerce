@@ -3,6 +3,7 @@ import axios from "axios";
 export namespace DncommerceApiClient {
 	const url = "https://dncommerce-api.vercel.app";
 	const token = `token=${process.env.DNCOMMERCE_API_TOKEN}`;
+	const productURL = `${url}/products`;
 
 	export interface IUser {
 		id?: number;
@@ -28,9 +29,9 @@ export namespace DncommerceApiClient {
 	export abstract class HTTPRequests {
 		abstract get(): Promise<ObjectBody[]>;
 		abstract getId(id: string): ObjectBody;
-		abstract create(body: ObjectBody): void;
-		abstract update(id: string, body: ObjectBody): void;
-		abstract delete(id: string): void;
+		abstract create(body: ObjectBody): Promise<boolean>;
+		abstract update(id: string, body: ObjectBody): Promise<boolean>;
+		abstract delete(ids: string): Promise<boolean>;
 	}
 
 	export class Users extends HTTPRequests {
@@ -46,13 +47,13 @@ export namespace DncommerceApiClient {
 		getId(id: string): IUser {
 			throw new Error("Method not implemented.");
 		}
-		async create(body: IUser): Promise<void> {
+		async create(body: IUser): Promise<boolean> {
 			throw new Error("Method not implemented.");
 		}
-		update(id: string, body: IUser): void {
+		async update(id: string, body: IUser): Promise<boolean> {
 			throw new Error("Method not implemented.");
 		}
-		delete(id: string): void {
+		async delete(id: string): Promise<boolean> {
 			throw new Error("Method not implemented.");
 		}
 	}
@@ -67,29 +68,30 @@ export namespace DncommerceApiClient {
 		async get(): Promise<IProduct[]> {
 			const {
 				data: { data },
-			} = await axios.get(`${url}/products?${token}`);
+			} = await axios.get(`${productURL}?${token}`);
 			return data;
 		}
 		getId(id: string): IProduct {
 			throw new Error("Method not implemented.");
 		}
-		async create(body: IProduct): Promise<void> {
-			console.log(body);
+		async create(body: IProduct): Promise<boolean> {
 			await axios
-				.post(`${url}/products?${token}`, body)
+				.post(`${productURL}?${token}`, body)
 				.then((res) => {
 					console.log(res);
 				})
 				.catch((res) => {
 					console.log(res);
 				});
-			//throw new Error("Method not implemented.");
+
+			return true;
 		}
-		update(id: string, body: IProduct): void {
+		async update(id: string, body: IProduct): Promise<boolean> {
 			throw new Error("Method not implemented.");
 		}
-		delete(id: string): void {
-			throw new Error("Method not implemented.");
+		async delete(id: string): Promise<boolean> {
+			await axios.delete(`${productURL}/${id}?${token}`);
+			return true;
 		}
 	}
 }

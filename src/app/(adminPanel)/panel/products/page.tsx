@@ -9,5 +9,6 @@ export const metadata: Metadata = {
 
 export default async function ProductsPanel() {
 	const products = await API.Products.Instance().get();
-	return <ProductInventory data={products} />;
+
+	return <ProductInventory initialData={products} />;
 }

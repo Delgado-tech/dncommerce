@@ -14,6 +14,7 @@ interface Props {
 	maxLength?: number;
 	maxLengthDisplay?: boolean;
 	disabled?: boolean;
+	reload?: boolean;
 	required?: boolean;
 	regex?: RegexFunctionType;
 	setInvalidInputId?: setInvalidInputIdFunc;
@@ -28,6 +29,7 @@ export default function Textarea({
 	maxLength,
 	maxLengthDisplay = true,
 	disabled = false,
+	reload = false,
 	required,
 	regex,
 	setInvalidInputId,
@@ -53,6 +55,15 @@ export default function Textarea({
 		if (value.length > 0) {
 			labelElement?.classList.remove("top-[9px]", "text-base");
 			labelElement?.classList.add("-top-[12px]", "text-sm");
+		}
+
+		if (textareaElement && minLength) {
+			setInvalidData(textareaElement.value.length < minLength);
+
+			if (setInvalidInputId) {
+				const isInvalid = textareaElement.value.length < minLength;
+				setInvalidInputId(inputId, isInvalid);
+			}
 		}
 
 		function toggleLabelClasses() {
@@ -145,7 +156,7 @@ export default function Textarea({
 			setInvalidData(false);
 			setInvalidInputId(inputId, false);
 		}
-	}, [disabled, value]);
+	}, [disabled, value, reload]);
 
 	return (
 		<div className="flex flex-col gap-1">
