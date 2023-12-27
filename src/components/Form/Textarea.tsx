@@ -35,6 +35,7 @@ export default function Textarea({
 	setInvalidInputId,
 }: Props) {
 	const textareaBodyRef = useRef<HTMLDivElement>(null);
+	const textareaElementRef = useRef<HTMLTextAreaElement>(null);
 	const [invalidData, setInvalidData] = useState<boolean>(false);
 
 	const labelTC: IToggleClass[] = [
@@ -44,17 +45,34 @@ export default function Textarea({
 	];
 
 	useEffect(() => {
-		const textareaElement = textareaBodyRef.current?.querySelector("textarea");
+		const textareaElement = textareaElementRef.current;
+		if (textareaElement) {
+			textareaElement.value = value || "";
+		}
+
+		if (disabled && setInvalidInputId) {
+			setInvalidData(false);
+			setInvalidInputId(inputId, false);
+		}
+	}, [disabled, value, reload]);
+
+	useEffect(() => {
 		const labelElement = textareaBodyRef.current?.querySelector("label");
+		const textareaElement = textareaElementRef.current;
 		const lengthDisplayElement =
 			textareaBodyRef.current?.querySelector(".lengthDisplay");
 		const spanElement = textareaBodyRef.current?.querySelector(
 			".trace",
 		) as HTMLSpanElement;
 
-		if (value.length > 0) {
-			labelElement?.classList.remove("top-[9px]", "text-base");
-			labelElement?.classList.add("-top-[12px]", "text-sm");
+		if (textareaElement) {
+			if (textareaElement.value.length > 0) {
+				labelElement?.classList.remove("top-[9px]", "text-base");
+				labelElement?.classList.add("-top-[12px]", "text-sm");
+			} else {
+				labelElement?.classList.remove("-top-[12px]", "text-sm");
+				labelElement?.classList.add("top-[9px]", "text-base");
+			}
 		}
 
 		if (textareaElement && minLength) {
@@ -144,19 +162,7 @@ export default function Textarea({
 				textareaBodyRef.current.removeEventListener("click", bodyClick);
 			}
 		};
-	}, [disabled, invalidData]);
-
-	useEffect(() => {
-		const textareaElement = textareaBodyRef.current?.querySelector("textarea");
-		if (textareaElement) {
-			textareaElement.value = value || "";
-		}
-
-		if (disabled && setInvalidInputId) {
-			setInvalidData(false);
-			setInvalidInputId(inputId, false);
-		}
-	}, [disabled, value, reload]);
+	}, [disabled, invalidData, reload]);
 
 	return (
 		<div className="flex flex-col gap-1">
@@ -182,6 +188,7 @@ export default function Textarea({
 					</span>
 				</label>
 				<textarea
+					ref={textareaElementRef}
 					className="mt-1 w-full resize-none bg-transparent px-3 py-2 outline-none"
 					id={inputId}
 					name={inputId}
@@ -192,13 +199,15 @@ export default function Textarea({
 					defaultValue={value}
 					disabled={disabled}
 				></textarea>
-				{maxLengthDisplay && (
+				{reload !== undefined && maxLengthDisplay && (
 					<span className="lengthDisplay select-none px-2 py-1 text-right text-sm text-zinc-600">
-						{value ? Number(maxLength) - value.length : maxLength}
+						{textareaElementRef.current
+							? Number(maxLength) - textareaElementRef.current.value.length
+							: maxLength}
 					</span>
 				)}
 			</div>
-			{invalidData && !disabled && (
+			{reload !== undefined && invalidData && !disabled && (
 				<p className="text-end text-sm text-red-400">min: 3 caracteres</p>
 			)}
 		</div>

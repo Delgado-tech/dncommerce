@@ -75,19 +75,16 @@ export namespace DncommerceApiClient {
 			throw new Error("Method not implemented.");
 		}
 		async create(body: IProduct): Promise<boolean> {
-			await axios
-				.post(`${productURL}?${token}`, body)
-				.then((res) => {
-					console.log(res);
-				})
-				.catch((res) => {
-					console.log(res);
-				});
+			await axios.post(`${productURL}?${token}`, body);
 
 			return true;
 		}
 		async update(id: string, body: IProduct): Promise<boolean> {
-			throw new Error("Method not implemented.");
+			console.log(id);
+			console.log(body);
+			//await axios.put(`${productURL}/${id}?${token}`, body);
+
+			return true;
 		}
 		async delete(id: string): Promise<boolean> {
 			await axios.delete(`${productURL}/${id}?${token}`);

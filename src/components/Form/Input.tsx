@@ -20,6 +20,7 @@ interface Props {
 	minLength?: number;
 	maxLength?: number;
 	disabled?: boolean;
+	reload?: boolean;
 	required?: boolean;
 	regex?: RegexFunctionType;
 	setInvalidInputId?: setInvalidInputIdFunc;
@@ -34,6 +35,7 @@ export default function Input({
 	maxLength,
 	disabled = false,
 	required,
+	reload = false,
 	regex,
 	setInvalidInputId,
 }: Props) {
@@ -48,14 +50,31 @@ export default function Input({
 
 	useEffect(() => {
 		const inputElement = inputBodyRef.current?.querySelector("input");
+		if (inputElement) {
+			inputElement.value = value || "";
+		}
+
+		if (disabled && setInvalidInputId) {
+			setInvalidData(false);
+			setInvalidInputId(inputId, false);
+		}
+	}, [disabled, value, reload]);
+
+	useEffect(() => {
+		const inputElement = inputBodyRef.current?.querySelector("input");
 		const labelElement = inputBodyRef.current?.querySelector("label");
 		const spanElement = inputBodyRef.current?.querySelector(
 			".trace",
 		) as HTMLSpanElement;
 
-		if (value.length > 0) {
-			labelElement?.classList.remove("top-[9px]", "text-base");
-			labelElement?.classList.add("-top-[12px]", "text-sm");
+		if (inputElement) {
+			if (inputElement.value.length > 0) {
+				labelElement?.classList.remove("top-[9px]", "text-base");
+				labelElement?.classList.add("-top-[12px]", "text-sm");
+			} else {
+				labelElement?.classList.remove("-top-[12px]", "text-sm");
+				labelElement?.classList.add("top-[9px]", "text-base");
+			}
 		}
 
 		if (inputElement && minLength) {
@@ -116,19 +135,7 @@ export default function Input({
 				inputElement.removeEventListener("focusout", inputFocusOut);
 			}
 		};
-	}, [disabled, invalidData]);
-
-	useEffect(() => {
-		const inputElement = inputBodyRef.current?.querySelector("input");
-		if (inputElement) {
-			inputElement.value = value || "";
-		}
-
-		if (disabled && setInvalidInputId) {
-			setInvalidData(false);
-			setInvalidInputId(inputId, false);
-		}
-	}, [disabled, value]);
+	}, [disabled, invalidData, reload]);
 
 	return (
 		<div ref={inputBodyRef} className="relative flex flex-col gap-1">
@@ -159,7 +166,7 @@ export default function Input({
 				disabled={disabled}
 				required={required}
 			/>
-			{invalidData && (
+			{reload !== undefined && invalidData && (
 				<p className="text-end text-sm text-red-400">min: 3 caracteres</p>
 			)}
 		</div>

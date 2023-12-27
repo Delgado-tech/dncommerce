@@ -109,7 +109,7 @@ export default function Inventory({
 
 	useEffect(() => {
 		//console.log(selectedItems)
-	}, [selectedItems, clickedItemId]);
+	}, [selectedItems, clickedItemId, openedModals]);
 
 	function checkboxHandler(
 		event: React.MouseEvent<HTMLInputElement, MouseEvent>,
@@ -153,6 +153,8 @@ export default function Inventory({
 				setOpenedModal={setOpenedModal}
 				isModalActive={isModalActive}
 				row={rows[clickedItemId || 0]}
+				apiInstance={apiInstance}
+				dataUpdater={dataUpdater}
 			/>
 			<ModalDeleteRegister
 				modalId={EModals.deleteRegisters}
@@ -267,7 +269,7 @@ export default function Inventory({
 												if (target.classList.contains("checkbox")) return;
 
 												setClickedItemId(index);
-												setOpenedModal(EModals.registerActions, true);
+												//setOpenedModal(EModals.registerActions, true);
 											}}
 										>
 											<td className="rounded-bl-md rounded-tl-md px-4 py-4 text-center align-middle">

@@ -6,9 +6,10 @@ import Input from "../Form/Input";
 import { RegexTemplate } from "@/utils/regex";
 import Textarea from "../Form/Textarea";
 import { EModals, ITableDataRow } from "../Inventory";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import ModalConfirm from "./ModalConfirm";
 import { OpenedModal } from "@/controllers/modalController";
+import { DncommerceApiClient } from "@/services/dncommerce-api";
 
 interface Props {
 	modalId: number;
@@ -16,6 +17,8 @@ interface Props {
 	row?: ITableDataRow;
 	setOpenedModal: (modalId: number, isOpen: boolean) => void;
 	isModalActive: (modalId: number) => boolean;
+	dataUpdater: Dispatch<SetStateAction<boolean>>;
+	apiInstance: DncommerceApiClient.HTTPRequests;
 }
 
 export type setInvalidInputIdFunc = (
@@ -23,39 +26,66 @@ export type setInvalidInputIdFunc = (
 	pushCondition: boolean,
 ) => void;
 
+class invalidInputsIdController {
+	static invalidInputsId: string[] = [];
+	static add(inputId: string) {
+		this.invalidInputsId.push(inputId);
+	}
+	static remove(inputId: string) {
+		this.invalidInputsId = this.invalidInputsId.filter(
+			(value) => value !== inputId,
+		);
+	}
+}
+
 export default function ModalUpdateRegister({
 	modalId,
 	isActive,
 	row,
 	setOpenedModal,
 	isModalActive,
+	dataUpdater,
+	apiInstance,
 }: Props) {
 	const [readOnly, setReadOnly] = useState<boolean>(true);
 	const [invalidInputsId, setInvalidInputsId] = useState<string[]>([]);
 
+	const [reload, setReload] = useState(false);
+
+	const formRef = useRef<HTMLFormElement>(null);
+	const submitButtonRef = useRef<HTMLInputElement>(null);
+	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const formData = new FormData(formRef.current!);
+		const formObj = Object.fromEntries(formData.entries()); /*
+		apiInstance.update(String(row?.data[0].value), formObj).then(() => {
+			console.log(1);
+			//dataUpdater((u) => !u);
+			setReload((u) => !u);
+		});*/
+		setOpenedModal(EModals.confirmSaveRegister, false);
+		setOpenedModal(1, false);
+	};
+
 	useEffect(() => {
-		console.log(invalidInputsId);
-	}, [invalidInputsId]);
+		//console.log(invalidInputsId);
+	}, [invalidInputsId, reload]);
 
 	function setInvalidInputId(inputId: string, pushCondition: boolean) {
 		if (invalidInputsId) {
-			const index = invalidInputsId.findIndex((value) => value === inputId);
-
-			if (index > -1) {
-				invalidInputsId.splice(index, 1);
-			}
-
+			invalidInputsIdController.remove(inputId);
 			if (pushCondition) {
-				invalidInputsId.push(inputId);
+				invalidInputsIdController.add(inputId);
 			}
 
-			setInvalidInputsId(invalidInputsId.map((value) => value));
+			setInvalidInputsId(invalidInputsIdController.invalidInputsId);
 		}
 	}
 
 	function closeEditMode() {
 		setOpenedModal(EModals.confirmSaveRegister, false);
 		setReadOnly(true);
+		setReload((u) => !u);
 	}
 
 	return (
@@ -81,10 +111,17 @@ export default function ModalUpdateRegister({
 					</>
 				}
 				isActive={isActive}
-				closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
+				closeModalHandler={(modalId: number) => {
+					setOpenedModal(modalId, false);
+					setReadOnly(true);
+				}}
 				dontCloseOnClickOutside
 			>
-				<form id={"ItemForm"} className="my-4 flex flex-col gap-6">
+				<form
+					ref={formRef}
+					onSubmit={onSubmit}
+					className="my-4 flex flex-col gap-6"
+				>
 					{row &&
 						row.data.map((data, index) => {
 							if (!data.formAttributes) return;
@@ -101,6 +138,7 @@ export default function ModalUpdateRegister({
 										required={data.formAttributes.required}
 										disabled={readOnly}
 										setInvalidInputId={setInvalidInputId}
+										reload={reload}
 										key={index}
 									/>
 								);
@@ -118,6 +156,7 @@ export default function ModalUpdateRegister({
 									required={data.formAttributes.required}
 									disabled={readOnly}
 									setInvalidInputId={setInvalidInputId}
+									reload={reload}
 									key={index}
 								/>
 							);
@@ -158,15 +197,16 @@ export default function ModalUpdateRegister({
 							borderEqualsText
 							onClick={() => {
 								if (!readOnly) {
-									setOpenedModal(EModals.confirmSaveRegister, true);
 								} else {
-									setReadOnly(false);
+									//setReadOnly(false);
 								}
+								setOpenedModal(EModals.confirmSaveRegister, true);
 							}}
 							invertColors
 							disabled={!readOnly && invalidInputsId.length > 0}
 						/>
 					</div>
+					<input ref={submitButtonRef} type="submit" className="hidden" />
 				</form>
 			</Modal>
 			<ModalConfirm
@@ -176,16 +216,20 @@ export default function ModalUpdateRegister({
 				setOpenedModal={setOpenedModal}
 				cancelCta={{
 					text: "Cancelar",
-					action: closeEditMode,
+					action: () => {
+						setOpenedModal(modalId, false);
+					},
 					color: "#0284c7",
 				}}
 				confirmCta={{
 					text: "Salvar",
-					action: closeEditMode,
+					action: () => {
+						submitButtonRef.current?.click();
+					},
 					color: "#0284c7",
 				}}
 			/>
-			<ModalConfirm
+			{/* <ModalConfirm
 				isActive={isModalActive(EModals.deleteRegister)}
 				modalId={EModals.deleteRegister}
 				title={
@@ -206,7 +250,7 @@ export default function ModalUpdateRegister({
 					action: () => setOpenedModal(EModals.deleteRegister, false),
 					color: "#dc2626",
 				}}
-			/>
+			/> */}
 		</>
 	);
 }

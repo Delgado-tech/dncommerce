@@ -51,7 +51,7 @@ export default function ModalCreateRegister({
 	const formRef = useRef<HTMLFormElement>(null);
 	const submitButtonRef = useRef<HTMLInputElement>(null);
 
-	const [te, sette] = useState(false);
+	const [reload, setReload] = useState(false);
 
 	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -64,8 +64,8 @@ export default function ModalCreateRegister({
 	};
 
 	useEffect(() => {
-		console.log(invalidInputsId);
-	}, [invalidInputsId, te]);
+		//console.log(invalidInputsId);
+	}, [invalidInputsId, reload]);
 
 	function setInvalidInputId(inputId: string, pushCondition: boolean) {
 		if (invalidInputsId) {
@@ -99,7 +99,7 @@ export default function ModalCreateRegister({
 				isActive={isActive}
 				closeModalHandler={(modalId: number) => {
 					setOpenedModal(modalId, false);
-					sette((u) => !u);
+					setReload((u) => !u);
 				}}
 				dontCloseOnClickOutside
 			>
@@ -123,7 +123,7 @@ export default function ModalCreateRegister({
 										regex={data.formAttributes.regex}
 										required={data.formAttributes.required}
 										setInvalidInputId={setInvalidInputId}
-										reload={te}
+										reload={reload}
 										key={index}
 									/>
 								);
@@ -140,6 +140,7 @@ export default function ModalCreateRegister({
 									regex={data.formAttributes.regex}
 									required={data.formAttributes.required}
 									setInvalidInputId={setInvalidInputId}
+									reload={reload}
 									key={index}
 								/>
 							);
