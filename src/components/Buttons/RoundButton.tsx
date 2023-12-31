@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ReactNode, useEffect, useRef } from "react";
+import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
 
 interface Props {
 	text?: string;
 	icon?: ReactNode;
 	href?: string;
-	onClick?: Function;
+	onClick?: MouseEventHandler<HTMLButtonElement>;
 	textColor?: string;
 	bgColor?: string;
 	border?: boolean;
@@ -60,7 +60,7 @@ export default function RoundButton({
 	return (
 		<Link href={href ?? "#"}>
 			<button
-				onClick={() => onClick()}
+				onClick={onClick}
 				className={`flex cursor-pointer select-none items-center gap-2 rounded-full transition-all hover:scale-105 hover:shadow-sm hover:brightness-110 disabled:cursor-not-allowed`}
 				style={{
 					backgroundColor: bgColor,

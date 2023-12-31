@@ -20,10 +20,10 @@ interface Props {
 	minLength?: number;
 	maxLength?: number;
 	disabled?: boolean;
-	reload?: boolean;
 	required?: boolean;
 	regex?: RegexFunctionType;
-	setInvalidInputId?: setInvalidInputIdFunc;
+	addInvalidInputHandler?: (inputId: string) => void;
+	removeInvalidInputHandler?: (inputId: string) => void;
 }
 
 export default function Input({
@@ -35,9 +35,9 @@ export default function Input({
 	maxLength,
 	disabled = false,
 	required,
-	reload = false,
 	regex,
-	setInvalidInputId,
+	addInvalidInputHandler,
+	removeInvalidInputHandler,
 }: Props) {
 	const inputBodyRef = useRef<HTMLDivElement>(null);
 	const [invalidData, setInvalidData] = useState<boolean>(false);
@@ -54,11 +54,11 @@ export default function Input({
 			inputElement.value = value || "";
 		}
 
-		if (disabled && setInvalidInputId) {
+		if (disabled && removeInvalidInputHandler) {
 			setInvalidData(false);
-			setInvalidInputId(inputId, false);
+			removeInvalidInputHandler(inputId);
 		}
-	}, [disabled, value, reload]);
+	}, [disabled, value]);
 
 	useEffect(() => {
 		const inputElement = inputBodyRef.current?.querySelector("input");
@@ -77,13 +77,21 @@ export default function Input({
 			}
 		}
 
-		if (inputElement && minLength) {
-			setInvalidData(inputElement.value.length < minLength);
+		const setInvalid = (condition: boolean) => {
+			setInvalidData(condition);
 
-			if (setInvalidInputId) {
-				const isInvalid = inputElement.value.length < minLength;
-				setInvalidInputId(inputId, isInvalid);
+			if (addInvalidInputHandler && removeInvalidInputHandler) {
+				if (condition) {
+					addInvalidInputHandler(inputId);
+				} else {
+					removeInvalidInputHandler(inputId);
+				}
 			}
+		};
+
+		if (inputElement && minLength) {
+			const isInvalid = inputElement.value.length < minLength;
+			setInvalid(isInvalid);
 		}
 
 		function toggleLabelClasses() {
@@ -113,12 +121,8 @@ export default function Input({
 			}
 
 			if (minLength) {
-				setInvalidData(target.value.length < minLength);
-
-				if (setInvalidInputId) {
-					const isInvalid = target.value.length < minLength;
-					setInvalidInputId(inputId, isInvalid);
-				}
+				const isInvalid = target.value.length < minLength;
+				setInvalid(isInvalid);
 			}
 		};
 
@@ -135,7 +139,7 @@ export default function Input({
 				inputElement.removeEventListener("focusout", inputFocusOut);
 			}
 		};
-	}, [disabled, invalidData, reload]);
+	}, [disabled, invalidData]);
 
 	return (
 		<div ref={inputBodyRef} className="relative flex flex-col gap-1">
@@ -166,7 +170,7 @@ export default function Input({
 				disabled={disabled}
 				required={required}
 			/>
-			{reload !== undefined && invalidData && (
+			{invalidData && (
 				<p className="text-end text-sm text-red-400">min: 3 caracteres</p>
 			)}
 		</div>

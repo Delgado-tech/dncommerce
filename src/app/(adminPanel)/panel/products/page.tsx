@@ -1,6 +1,6 @@
+import ProductInventory from "@/components/ProductInventory";
 import { DncommerceApiClient as API } from "@/services/dncommerce-api";
 import { Metadata } from "next";
-import ProductInventory from "../../../../components/ProductInventory";
 
 export const metadata: Metadata = {
 	title: "Panel - Products",

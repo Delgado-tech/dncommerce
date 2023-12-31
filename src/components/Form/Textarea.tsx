@@ -14,10 +14,10 @@ interface Props {
 	maxLength?: number;
 	maxLengthDisplay?: boolean;
 	disabled?: boolean;
-	reload?: boolean;
 	required?: boolean;
 	regex?: RegexFunctionType;
-	setInvalidInputId?: setInvalidInputIdFunc;
+	addInvalidInputHandler?: (inputId: string) => void;
+	removeInvalidInputHandler?: (inputId: string) => void;
 }
 
 export default function Textarea({
@@ -29,10 +29,10 @@ export default function Textarea({
 	maxLength,
 	maxLengthDisplay = true,
 	disabled = false,
-	reload = false,
 	required,
 	regex,
-	setInvalidInputId,
+	addInvalidInputHandler,
+	removeInvalidInputHandler,
 }: Props) {
 	const textareaBodyRef = useRef<HTMLDivElement>(null);
 	const textareaElementRef = useRef<HTMLTextAreaElement>(null);
@@ -50,11 +50,11 @@ export default function Textarea({
 			textareaElement.value = value || "";
 		}
 
-		if (disabled && setInvalidInputId) {
+		if (disabled && removeInvalidInputHandler) {
 			setInvalidData(false);
-			setInvalidInputId(inputId, false);
+			removeInvalidInputHandler(inputId);
 		}
-	}, [disabled, value, reload]);
+	}, [disabled, value]);
 
 	useEffect(() => {
 		const labelElement = textareaBodyRef.current?.querySelector("label");
@@ -75,13 +75,21 @@ export default function Textarea({
 			}
 		}
 
-		if (textareaElement && minLength) {
-			setInvalidData(textareaElement.value.length < minLength);
+		const setInvalid = (condition: boolean) => {
+			setInvalidData(condition);
 
-			if (setInvalidInputId) {
-				const isInvalid = textareaElement.value.length < minLength;
-				setInvalidInputId(inputId, isInvalid);
+			if (addInvalidInputHandler && removeInvalidInputHandler) {
+				if (condition) {
+					addInvalidInputHandler(inputId);
+				} else {
+					removeInvalidInputHandler(inputId);
+				}
 			}
+		};
+
+		if (textareaElement && minLength) {
+			const isInvalid = textareaElement.value.length < minLength;
+			setInvalid(isInvalid);
 		}
 
 		function toggleLabelClasses() {
@@ -115,12 +123,8 @@ export default function Textarea({
 				lengthDisplayElement.textContent = String(maxLength - target.value.length);
 			}
 			if (minLength) {
-				setInvalidData(target.value.length < minLength);
-
-				if (setInvalidInputId) {
-					const isInvalid = target.value.length < minLength;
-					setInvalidInputId(inputId, isInvalid);
-				}
+				const isInvalid = target.value.length < minLength;
+				setInvalid(isInvalid);
 			}
 		};
 
@@ -162,7 +166,7 @@ export default function Textarea({
 				textareaBodyRef.current.removeEventListener("click", bodyClick);
 			}
 		};
-	}, [disabled, invalidData, reload]);
+	}, [disabled, invalidData]);
 
 	return (
 		<div className="flex flex-col gap-1">
@@ -199,7 +203,7 @@ export default function Textarea({
 					defaultValue={value}
 					disabled={disabled}
 				></textarea>
-				{reload !== undefined && maxLengthDisplay && (
+				{maxLengthDisplay && (
 					<span className="lengthDisplay select-none px-2 py-1 text-right text-sm text-zinc-600">
 						{textareaElementRef.current
 							? Number(maxLength) - textareaElementRef.current.value.length
@@ -207,7 +211,7 @@ export default function Textarea({
 					</span>
 				)}
 			</div>
-			{reload !== undefined && invalidData && !disabled && (
+			{invalidData && !disabled && (
 				<p className="text-end text-sm text-red-400">min: 3 caracteres</p>
 			)}
 		</div>

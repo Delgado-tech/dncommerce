@@ -9,13 +9,12 @@ import {
 	useState,
 } from "react";
 import { FiPlus, FiTrash } from "react-icons/fi";
-import Modal from "./Modals/Modal";
-import ModalDeleteRegister from "./Modals/ModalDeleteRegisters";
-import ModalUpdateRegister from "./Modals/ModalUpdateRegister";
-import { RegexFunctionType, RegexTemplate } from "@/utils/regex";
-import { OpenedModal } from "@/controllers/modalController";
-import ModalCreateRegister from "./Modals/ModalCreateRegister";
+import { RegexFunctionType } from "@/utils/regex";
 import { DncommerceApiClient } from "@/services/dncommerce-api";
+import useModal, { modalController } from "../hooks/useModal";
+import ModalCreateRegister from "./Modals2/ModalCreateRegister";
+import ModalUpdateRegister from "./Modals2/ModalUpdateRegister";
+import ModalDeleteRegisters from "./Modals2/ModalDeleteRegisters";
 
 export interface IInventory {
 	table: ITable;
@@ -63,69 +62,36 @@ interface Props {
 	apiInstance: DncommerceApiClient.HTTPRequests;
 }
 
-export enum EModals {
-	"deleteRegisters",
-	"deleteRegister",
-	"confirmSaveRegister",
-	"confirmCreateRegister",
-	"createRegister",
-	"registerActions",
-}
-
 export default function Inventory({
 	inventory,
 	dataUpdater,
 	apiInstance,
 }: Props) {
-	const [selectedItems, setSelectedItems] = useState<string[]>([]);
-	const [clickedItemId, setClickedItemId] = useState<number>();
-	const [openedModals, setOpenedModals] = useState<OpenedModal[]>([
-		{ id: EModals.deleteRegisters, isActive: false },
-		{ id: EModals.deleteRegister, isActive: false },
-		{ id: EModals.confirmSaveRegister, isActive: false },
-		{ id: EModals.confirmCreateRegister, isActive: false },
-		{ id: EModals.createRegister, isActive: false },
-		{ id: EModals.registerActions, isActive: false },
-	]);
+	const [checkboxes, setCheckboxes] = useState<string[]>([]);
 
-	function setOpenedModal(modalId: number, isOpen: boolean): void {
-		const newOpenedModals = openedModals.map((modal) => {
-			if (modal.id === modalId) {
-				modal.isActive = isOpen;
-			}
-			return modal;
-		});
-		setOpenedModals(newOpenedModals);
-	}
-
-	function isModalActive(modalId: number): boolean {
-		return openedModals.find((modal) => modal.id === modalId)?.isActive || false;
-	}
+	const { modalList, addModal, closeModal } = useModal();
 
 	//#region
 	const headers = inventory!.table.headers;
 	const rows = inventory!.table.rows;
 	const layout_shadow = "shadow-md rounded-md";
 
-	useEffect(() => {
-		//console.log(selectedItems)
-	}, [selectedItems, clickedItemId, openedModals]);
-
 	function checkboxHandler(
 		event: React.MouseEvent<HTMLInputElement, MouseEvent>,
-		selectedItemId: string,
+		registerId: string,
 	) {
-		const index = selectedItems.findIndex((id) => id === selectedItemId);
+		const checkbox = event.target as HTMLInputElement;
 
-		if (index >= 0) {
-			selectedItems.splice(index, 1);
+		if (checkbox.checked) {
+			setCheckboxes((prevRegisters) => [
+				...prevRegisters.filter((id) => id !== registerId),
+				registerId,
+			]);
+		} else {
+			setCheckboxes((prevRegisters) =>
+				prevRegisters.filter((id) => id !== registerId),
+			);
 		}
-
-		if (event.currentTarget.checked) {
-			selectedItems.push(selectedItemId);
-		}
-
-		setSelectedItems([...selectedItems]);
 	}
 
 	function roundedTableBorder(currentIndex: number, lastIndex: number): string {
@@ -136,36 +102,45 @@ export default function Inventory({
 	}
 	//#endregion
 
+	const getModalUpdateRegister = (registerIndex: number): React.ReactNode => {
+		return (
+			<ModalUpdateRegister
+				key={modalController.getNextId()}
+				modalId={modalController.getNextId()}
+				row={rows[registerIndex]}
+				closeModalHandler={closeModal}
+				dataUpdater={dataUpdater}
+				apiInstance={apiInstance}
+			/>
+		);
+	};
+
+	const modalCreateRegister: React.ReactNode = (
+		<ModalCreateRegister
+			key={modalController.getNextId()}
+			modalId={modalController.getNextId()}
+			row={rows[0]}
+			closeModalHandler={closeModal}
+			dataUpdater={dataUpdater}
+			apiInstance={apiInstance}
+		/>
+	);
+
+	const modalConfirmDeleteRegisters: React.ReactNode = (
+		<ModalDeleteRegisters
+			key={modalController.getNextId()}
+			modalId={modalController.getNextId()}
+			selectedItems={checkboxes}
+			setSelectedItems={setCheckboxes}
+			closeModalHandler={closeModal}
+			dataUpdater={dataUpdater}
+			apiInstance={apiInstance}
+		/>
+	);
+
 	return (
 		<section className="w-full bg-zinc-100">
-			<ModalCreateRegister
-				modalId={EModals.createRegister}
-				isActive={isModalActive(EModals.createRegister)}
-				setOpenedModal={setOpenedModal}
-				isModalActive={isModalActive}
-				row={rows[clickedItemId || 0]}
-				apiInstance={apiInstance}
-				dataUpdater={dataUpdater}
-			/>
-			<ModalUpdateRegister
-				modalId={EModals.registerActions}
-				isActive={isModalActive(EModals.registerActions)}
-				setOpenedModal={setOpenedModal}
-				isModalActive={isModalActive}
-				row={rows[clickedItemId || 0]}
-				apiInstance={apiInstance}
-				dataUpdater={dataUpdater}
-			/>
-			<ModalDeleteRegister
-				modalId={EModals.deleteRegisters}
-				isActive={isModalActive(EModals.deleteRegisters)}
-				selectedItems={selectedItems}
-				setOpenedModal={setOpenedModal}
-				setSelectedItems={setSelectedItems}
-				apiInstance={apiInstance}
-				dataUpdater={dataUpdater}
-			/>
-
+			{modalList.map((modal) => modal)}
 			<main className="h-full min-h-screen w-full max-w-[1600px] bg-zinc-50 p-16 opacity-90">
 				{inventory ? (
 					<>
@@ -176,7 +151,7 @@ export default function Inventory({
 							<RoundButton
 								text="Adicionar Produto"
 								icon={<FiPlus />}
-								onClick={() => setOpenedModal(EModals.createRegister, true)}
+								onClick={() => addModal(modalCreateRegister)}
 								invertColors
 							/>
 						</header>
@@ -210,17 +185,17 @@ export default function Inventory({
 											<div className="flex items-center gap-8">
 												<a
 													className={`flex select-none items-center gap-2 font-medium ${
-														selectedItems.length === 0
+														checkboxes.length === 0
 															? "text-zinc-300"
 															: "cursor-pointer hover:text-red-500"
 													} transition-colors`}
-													//todo onclick modal
 												>
 													<FiTrash />
 													<p
 														onClick={() => {
-															selectedItems.length > 0 &&
-																setOpenedModal(EModals.deleteRegisters, true);
+															if (checkboxes.length > 0) {
+																addModal(modalConfirmDeleteRegisters);
+															}
 														}}
 													>
 														Excluir Registros
@@ -228,7 +203,7 @@ export default function Inventory({
 												</a>
 												<p
 													className={`select-none font-normal ${
-														selectedItems.length === 0
+														checkboxes.length === 0
 															? "text-zinc-300 "
 															: "cursor-pointer underline transition-colors"
 													}`}
@@ -236,7 +211,7 @@ export default function Inventory({
 														const checkboxes: NodeListOf<HTMLInputElement> =
 															document.querySelectorAll("input[type='checkbox']");
 														checkboxes.forEach((checkbox) => (checkbox.checked = false));
-														setSelectedItems([]);
+														setCheckboxes([]);
 													}}
 												>
 													Limpar Seleção
@@ -268,8 +243,7 @@ export default function Inventory({
 												const target = event.target as HTMLElement;
 												if (target.classList.contains("checkbox")) return;
 
-												setClickedItemId(index);
-												//setOpenedModal(EModals.registerActions, true);
+												addModal(getModalUpdateRegister(index));
 											}}
 										>
 											<td className="rounded-bl-md rounded-tl-md px-4 py-4 text-center align-middle">

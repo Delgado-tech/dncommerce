@@ -4,6 +4,7 @@ export namespace DncommerceApiClient {
 	const url = "https://dncommerce-api.vercel.app";
 	const token = `token=${process.env.DNCOMMERCE_API_TOKEN}`;
 	const productURL = `${url}/products`;
+	const userURL = `${url}/users`;
 
 	export interface IUser {
 		id?: number;
@@ -42,7 +43,10 @@ export namespace DncommerceApiClient {
 		}
 
 		async get(): Promise<IUser[]> {
-			throw new Error("Method not implemented.");
+			const {
+				data: { data },
+			} = await axios.get(`${userURL}?${token}`);
+			return data;
 		}
 		getId(id: string): IUser {
 			throw new Error("Method not implemented.");
@@ -80,9 +84,7 @@ export namespace DncommerceApiClient {
 			return true;
 		}
 		async update(id: string, body: IProduct): Promise<boolean> {
-			console.log(id);
-			console.log(body);
-			//await axios.put(`${productURL}/${id}?${token}`, body);
+			await axios.put(`${productURL}/${id}?${token}`, body);
 
 			return true;
 		}

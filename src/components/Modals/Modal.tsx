@@ -1,6 +1,5 @@
 "use client";
 
-import { ModalController } from "@/controllers/modalController";
 import { useEffect } from "react";
 import { FiX } from "react-icons/fi";
 
