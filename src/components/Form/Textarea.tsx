@@ -3,7 +3,6 @@
 import { IToggleClass, cssToggleClasses } from "@/utils/cssToggleClasses";
 import { RegexFunctionType } from "@/utils/regex";
 import { useEffect, useRef, useState } from "react";
-import { setInvalidInputIdFunc } from "../Modals/ModalUpdateRegister";
 
 interface Props {
 	inputId: string;
@@ -212,7 +211,7 @@ export default function Textarea({
 				)}
 			</div>
 			{invalidData && !disabled && (
-				<p className="text-end text-sm text-red-400">min: 3 caracteres</p>
+				<p className="text-end text-sm text-red-400">min: {minLength} caracteres</p>
 			)}
 		</div>
 	);

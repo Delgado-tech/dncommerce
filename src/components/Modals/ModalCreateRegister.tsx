@@ -3,80 +3,71 @@
 import RoundButton from "../Buttons/RoundButton";
 import Modal from "./Modal";
 import Input from "../Form/Input";
-import { RegexTemplate } from "@/utils/regex";
 import Textarea from "../Form/Textarea";
-import { EModals, ITableDataRow } from "../Inventory";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { ITableDataRow } from "../Inventory";
+import { Dispatch, SetStateAction, useRef } from "react";
 import ModalConfirm from "./ModalConfirm";
-import { OpenedModal } from "@/controllers/modalController";
 import { DncommerceApiClient } from "@/services/dncommerce-api";
+import useModal, { modalController } from "@/hooks/useModal";
+import useInvalidInput from "@/hooks/useInvalidInput";
+import SelectField from "../Form/SelectField";
 
 interface Props {
 	modalId: number;
-	isActive: boolean;
 	row?: ITableDataRow;
-	setOpenedModal: (modalId: number, isOpen: boolean) => void;
-	isModalActive: (modalId: number) => boolean;
+	closeModalHandler: (modalId: number) => void;
 	dataUpdater: Dispatch<SetStateAction<boolean>>;
 	apiInstance: DncommerceApiClient.HTTPRequests;
-}
-
-export type setInvalidInputIdFunc = (
-	inputId: string,
-	pushCondition: boolean,
-) => void;
-
-class invalidInputsIdController {
-	static invalidInputsId: string[] = [];
-	static add(inputId: string) {
-		this.invalidInputsId.push(inputId);
-	}
-	static remove(inputId: string) {
-		this.invalidInputsId = this.invalidInputsId.filter(
-			(value) => value !== inputId,
-		);
-	}
+	inventoryName: string;
 }
 
 export default function ModalCreateRegister({
 	modalId,
-	isActive,
 	row,
-	setOpenedModal,
-	isModalActive,
+	closeModalHandler,
 	dataUpdater,
 	apiInstance,
+	inventoryName,
 }: Props) {
-	const [invalidInputsId, setInvalidInputsId] = useState<string[]>([]);
 	const formRef = useRef<HTMLFormElement>(null);
 	const submitButtonRef = useRef<HTMLInputElement>(null);
 
-	const [reload, setReload] = useState(false);
+	const { modalList, addModal, closeModal } = useModal();
+	const { invalidInputList, addInvalidInput, removeInvalidInput } =
+		useInvalidInput();
 
 	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
+		console.log(formObj);
 		apiInstance.create(formObj).then(() => {
 			dataUpdater((u) => !u);
-			setOpenedModal(modalId, false);
 		});
+		//closeModalHandler(modalId);
 	};
 
-	useEffect(() => {
-		//console.log(invalidInputsId);
-	}, [invalidInputsId, reload]);
-
-	function setInvalidInputId(inputId: string, pushCondition: boolean) {
-		if (invalidInputsId) {
-			invalidInputsIdController.remove(inputId);
-			if (pushCondition) {
-				invalidInputsIdController.add(inputId);
-			}
-
-			setInvalidInputsId(invalidInputsIdController.invalidInputsId);
-		}
-	}
+	const modalConfirmCreateRegister: React.ReactNode = (
+		<ModalConfirm
+			key={modalController.getNextId()}
+			modalId={modalController.getNextId()}
+			title={"Você tem CERTEZA que deseja adicionar esse item?"}
+			closeModalHandler={closeModal}
+			cancelCta={{
+				text: "Cancelar",
+				closeModal: true,
+				color: "#0284c7",
+			}}
+			confirmCta={{
+				text: "Adicionar",
+				action: () => {
+					submitButtonRef.current?.click();
+				},
+				closeModal: true,
+				color: "#0284c7",
+			}}
+		/>
+	);
 
 	return (
 		<>
@@ -91,17 +82,13 @@ export default function ModalCreateRegister({
 							>
 								#
 							</span>
-							<p>{"Criação do Produto"}</p>
+							<p>{`Criação do ${inventoryName}`}</p>
 						</div>
 						<hr></hr>
 					</>
 				}
-				isActive={isActive}
-				closeModalHandler={(modalId: number) => {
-					setOpenedModal(modalId, false);
-					setReload((u) => !u);
-				}}
-				dontCloseOnClickOutside
+				closeModalHandler={closeModalHandler}
+				outsideClick
 			>
 				<form
 					ref={formRef}
@@ -122,8 +109,20 @@ export default function ModalCreateRegister({
 										maxLength={data.formAttributes.maxLength}
 										regex={data.formAttributes.regex}
 										required={data.formAttributes.required}
-										setInvalidInputId={setInvalidInputId}
-										reload={reload}
+										addInvalidInputHandler={addInvalidInput}
+										removeInvalidInputHandler={removeInvalidInput}
+										key={index}
+									/>
+								);
+							}
+
+							if (data.formAttributes.type === "selection") {
+								return (
+									<SelectField
+										inputId={data.formAttributes.inputId}
+										label={data.formAttributes.label}
+										defaultValue={data.formAttributes.defaultValue}
+										selectOptions={data.formAttributes.selectOptions}
 										key={index}
 									/>
 								);
@@ -139,57 +138,37 @@ export default function ModalCreateRegister({
 									maxLength={data.formAttributes.maxLength}
 									regex={data.formAttributes.regex}
 									required={data.formAttributes.required}
-									setInvalidInputId={setInvalidInputId}
-									reload={reload}
+									addInvalidInputHandler={addInvalidInput}
+									removeInvalidInputHandler={removeInvalidInput}
 									key={index}
 								/>
 							);
 						})}
 					<div className="flex justify-end gap-4">
-						<RoundButton
-							text={"Cancelar"}
-							textColor="#71717a"
-							paddingX={8}
-							paddingY={2}
-							borderEqualsText
-							onClick={() => {
-								setOpenedModal(modalId, false);
-							}}
-						/>
+						<span className="closeModalCaller">
+							<RoundButton
+								text={"Cancelar"}
+								textColor="#71717a"
+								paddingX={8}
+								paddingY={2}
+								borderEqualsText
+							/>
+						</span>
 						<RoundButton
 							text={"Adicionar"}
 							textColor={"#22c55e"}
 							paddingX={8}
 							paddingY={2}
 							borderEqualsText
-							onClick={() => {
-								setOpenedModal(EModals.confirmCreateRegister, true);
-							}}
+							onClick={() => addModal(modalConfirmCreateRegister)}
 							invertColors
-							disabled={invalidInputsId.length > 0}
+							disabled={invalidInputList.length > 0}
 						/>
 					</div>
 					<input ref={submitButtonRef} type="submit" className="hidden" />
 				</form>
 			</Modal>
-			<ModalConfirm
-				isActive={isModalActive(EModals.confirmCreateRegister)}
-				modalId={EModals.confirmCreateRegister}
-				title={"Você tem CERTEZA que deseja adicionar esse item?"}
-				setOpenedModal={setOpenedModal}
-				cancelCta={{
-					text: "Cancelar",
-					action: () => setOpenedModal(EModals.confirmCreateRegister, false),
-					color: "#0284c7",
-				}}
-				confirmCta={{
-					text: "Adicionar",
-					action: () => {
-						submitButtonRef.current?.click();
-					},
-					color: "#0284c7",
-				}}
-			/>
+			{modalList.map((modal) => modal)}
 		</>
 	);
 }

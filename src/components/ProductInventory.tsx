@@ -105,6 +105,7 @@ export default function ProductInventory({ initialData }: Props) {
 			headers,
 			rows,
 		},
+		name: "Produto",
 	};
 
 	return (

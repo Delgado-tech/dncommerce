@@ -10,7 +10,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { setInvalidInputIdFunc } from "../Modals/ModalUpdateRegister";
 
 interface Props {
 	inputId: string;
@@ -171,7 +170,7 @@ export default function Input({
 				required={required}
 			/>
 			{invalidData && (
-				<p className="text-end text-sm text-red-400">min: 3 caracteres</p>
+				<p className="text-end text-sm text-red-400">min: {minLength} caracteres</p>
 			)}
 		</div>
 	);

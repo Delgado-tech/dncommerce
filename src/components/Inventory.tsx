@@ -12,12 +12,14 @@ import { FiPlus, FiTrash } from "react-icons/fi";
 import { RegexFunctionType } from "@/utils/regex";
 import { DncommerceApiClient } from "@/services/dncommerce-api";
 import useModal, { modalController } from "../hooks/useModal";
-import ModalCreateRegister from "./Modals2/ModalCreateRegister";
-import ModalUpdateRegister from "./Modals2/ModalUpdateRegister";
-import ModalDeleteRegisters from "./Modals2/ModalDeleteRegisters";
+import ModalCreateRegister from "./Modals/ModalCreateRegister";
+import ModalUpdateRegister from "./Modals/ModalUpdateRegister";
+import ModalDeleteRegisters from "./Modals/ModalDeleteRegisters";
+import { ISelectOptions } from "./Form/SelectField";
 
 export interface IInventory {
 	table: ITable;
+	name: string;
 	highlights?: IHighlights[];
 }
 
@@ -39,8 +41,9 @@ export interface ITableItem {
 
 interface ITableItemFormAttributes {
 	inputId: string;
-	type?: HTMLInputTypeAttribute | "textarea";
+	type?: HTMLInputTypeAttribute | "textarea" | "selection";
 	label?: string;
+	selectOptions?: ISelectOptions[];
 	rows?: number;
 	required?: boolean;
 	minLength?: number;
@@ -48,6 +51,7 @@ interface ITableItemFormAttributes {
 	maxLengthDisplay?: boolean;
 	defaultValue?: string | number;
 	regex?: RegexFunctionType;
+	addOnly?: boolean;
 }
 
 interface IHighlights {
@@ -111,6 +115,7 @@ export default function Inventory({
 				closeModalHandler={closeModal}
 				dataUpdater={dataUpdater}
 				apiInstance={apiInstance}
+				inventoryName={inventory!.name}
 			/>
 		);
 	};
@@ -123,6 +128,7 @@ export default function Inventory({
 			closeModalHandler={closeModal}
 			dataUpdater={dataUpdater}
 			apiInstance={apiInstance}
+			inventoryName={inventory!.name}
 		/>
 	);
 
@@ -146,10 +152,10 @@ export default function Inventory({
 					<>
 						<header className="mb-10 flex items-center justify-between gap-8">
 							<h1 className="text-2xl font-medium text-zinc-600">
-								Inventário de Produtos
+								Inventário de {inventory.name}s
 							</h1>
 							<RoundButton
-								text="Adicionar Produto"
+								text={`Adicionar ${inventory.name}`}
 								icon={<FiPlus />}
 								onClick={() => addModal(modalCreateRegister)}
 								invertColors

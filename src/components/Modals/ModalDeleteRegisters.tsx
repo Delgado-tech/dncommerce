@@ -6,10 +6,9 @@ import { DncommerceApiClient } from "@/services/dncommerce-api";
 
 interface Props {
 	modalId: number;
-	isActive: boolean;
 	selectedItems: string[];
-	setOpenedModal: (modalId: number, isOpen: boolean) => void;
 	setSelectedItems: Dispatch<SetStateAction<string[]>>;
+	closeModalHandler: (modalId: number) => void;
 	dataUpdater: Dispatch<SetStateAction<boolean>>;
 	apiInstance: DncommerceApiClient.HTTPRequests;
 }
@@ -17,9 +16,8 @@ interface Props {
 export default function ModalDeleteRegisters({
 	modalId,
 	selectedItems,
-	isActive,
-	setOpenedModal,
 	setSelectedItems,
+	closeModalHandler,
 	dataUpdater,
 	apiInstance,
 }: Props) {
@@ -30,7 +28,7 @@ export default function ModalDeleteRegisters({
 
 				if (selectedItems.length >= index) {
 					setSelectedItems([]);
-					setOpenedModal(modalId, false);
+					closeModalHandler(modalId);
 				}
 			}),
 		);
@@ -50,32 +48,33 @@ export default function ModalDeleteRegisters({
 				<>
 					<p>Registros a serem excluídos:</p>
 					<div className="flex">
-						{selectedItems.sort().map((item, index) => {
-							const dash = index >= selectedItems.length - 1 ? "" : "-";
-							return (
-								<p key={index}>
-									<span className="bg-opacity-85 rounded-md border border-red-200 bg-red-200 px-2 font-bold text-zinc-800 shadow-sm">
-										{item}
-									</span>
-									<span className="mx-1 text-zinc-500">{dash}</span>
-								</p>
-							);
-						})}
+						{selectedItems
+							.sort((a, b) => Number(a) - Number(b))
+							.map((item, index) => {
+								const dash = index >= selectedItems.length - 1 ? "" : "-";
+								return (
+									<p key={index}>
+										<span className="bg-opacity-85 rounded-md border border-red-200 bg-red-200 px-2 font-bold text-zinc-800 shadow-sm">
+											{item}
+										</span>
+										<span className="mx-1 text-zinc-500">{dash}</span>
+									</p>
+								);
+							})}
 					</div>
 				</>
 			}
+			closeModalHandler={closeModalHandler}
+			cancelCta={{
+				text: "Cancelar",
+				color: "#dc2626",
+				closeModal: true,
+			}}
 			confirmCta={{
 				text: "Excluir",
 				color: "#dc2626",
 				action: () => deleteItems(),
 			}}
-			cancelCta={{
-				text: "Cancelar",
-				color: "#dc2626",
-				action: () => setOpenedModal(modalId, false),
-			}}
-			setOpenedModal={setOpenedModal}
-			isActive={isActive}
 		/>
 	);
 }

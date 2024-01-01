@@ -29,7 +29,7 @@ export namespace DncommerceApiClient {
 
 	export abstract class HTTPRequests {
 		abstract get(): Promise<ObjectBody[]>;
-		abstract getId(id: string): ObjectBody;
+		abstract getId(id: string): Promise<ObjectBody>;
 		abstract create(body: ObjectBody): Promise<boolean>;
 		abstract update(id: string, body: ObjectBody): Promise<boolean>;
 		abstract delete(ids: string): Promise<boolean>;
@@ -48,17 +48,25 @@ export namespace DncommerceApiClient {
 			} = await axios.get(`${userURL}?${token}`);
 			return data;
 		}
-		getId(id: string): IUser {
-			throw new Error("Method not implemented.");
+		async getId(id: string): Promise<IUser> {
+			const {
+				data: { data },
+			} = await axios.get(`${userURL}/${id}?${token}`);
+			return data;
 		}
 		async create(body: IUser): Promise<boolean> {
-			throw new Error("Method not implemented.");
+			await axios.post(`${userURL}?${token}`, body);
+
+			return true;
 		}
 		async update(id: string, body: IUser): Promise<boolean> {
-			throw new Error("Method not implemented.");
+			await axios.put(`${userURL}/${id}?${token}`, body);
+
+			return true;
 		}
 		async delete(id: string): Promise<boolean> {
-			throw new Error("Method not implemented.");
+			await axios.delete(`${userURL}/${id}?${token}`);
+			return true;
 		}
 	}
 
@@ -75,8 +83,11 @@ export namespace DncommerceApiClient {
 			} = await axios.get(`${productURL}?${token}`);
 			return data;
 		}
-		getId(id: string): IProduct {
-			throw new Error("Method not implemented.");
+		async getId(id: string): Promise<IProduct> {
+			const {
+				data: { data },
+			} = await axios.get(`${productURL}/${id}?${token}`);
+			return data;
 		}
 		async create(body: IProduct): Promise<boolean> {
 			await axios.post(`${productURL}?${token}`, body);

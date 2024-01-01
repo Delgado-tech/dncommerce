@@ -46,6 +46,7 @@ export default function UserInventory({ initialData }: Props) {
 						inputId: "name",
 						type: "text",
 						minLength: 3,
+						addOnly: true,
 					},
 				},
 				{
@@ -55,6 +56,7 @@ export default function UserInventory({ initialData }: Props) {
 						type: "text",
 						regex: RegexTemplate.Cpf,
 						minLength: 14,
+						addOnly: true,
 					},
 				},
 				{
@@ -62,28 +64,45 @@ export default function UserInventory({ initialData }: Props) {
 					formAttributes: {
 						inputId: "email",
 						type: "email",
+						minLength: 8,
+						addOnly: true,
 					},
 				},
 				{
 					value: user.pass,
-					display: `********`,
+					display: "********",
 					formAttributes: {
-						inputId: "password",
+						inputId: "pass",
 						type: "password",
+						minLength: 8,
+						addOnly: true,
 					},
 				},
 				{
 					value: user.gender,
 					formAttributes: {
 						inputId: "gender",
-						type: "text",
+						type: "selection",
+						defaultValue: "null",
+						selectOptions: [
+							{ value: "M", display: "Masculino" },
+							{ value: "F", display: "Feminino" },
+							{ value: "null", display: "Não Informar" },
+						],
+						//addOnly: true,
 					},
 				},
 				{
 					value: user.access_level,
 					formAttributes: {
 						inputId: "access_level",
-						type: "text",
+						type: "selection",
+						selectOptions: [
+							{ value: "1", display: "Nenhum" },
+							{ value: "2", display: "Ler Registros" },
+							{ value: "3", display: "Ler e Editar Registros" },
+							{ value: "4", display: "Total" },
+						],
 					},
 				},
 			],
@@ -95,6 +114,7 @@ export default function UserInventory({ initialData }: Props) {
 			headers,
 			rows,
 		},
+		name: "Usuário",
 	};
 
 	return (

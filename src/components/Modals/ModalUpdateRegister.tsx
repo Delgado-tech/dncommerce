@@ -3,90 +3,105 @@
 import RoundButton from "../Buttons/RoundButton";
 import Modal from "./Modal";
 import Input from "../Form/Input";
-import { RegexTemplate } from "@/utils/regex";
 import Textarea from "../Form/Textarea";
-import { EModals, ITableDataRow } from "../Inventory";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { ITableDataRow } from "../Inventory";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import ModalConfirm from "./ModalConfirm";
-import { OpenedModal } from "@/controllers/modalController";
 import { DncommerceApiClient } from "@/services/dncommerce-api";
+import useModal, { modalController } from "@/hooks/useModal";
+import useInvalidInput from "@/hooks/useInvalidInput";
+import SelectField from "../Form/SelectField";
 
 interface Props {
 	modalId: number;
-	isActive: boolean;
 	row?: ITableDataRow;
-	setOpenedModal: (modalId: number, isOpen: boolean) => void;
-	isModalActive: (modalId: number) => boolean;
+	closeModalHandler: (modalId: number) => void;
 	dataUpdater: Dispatch<SetStateAction<boolean>>;
 	apiInstance: DncommerceApiClient.HTTPRequests;
-}
-
-export type setInvalidInputIdFunc = (
-	inputId: string,
-	pushCondition: boolean,
-) => void;
-
-class invalidInputsIdController {
-	static invalidInputsId: string[] = [];
-	static add(inputId: string) {
-		this.invalidInputsId.push(inputId);
-	}
-	static remove(inputId: string) {
-		this.invalidInputsId = this.invalidInputsId.filter(
-			(value) => value !== inputId,
-		);
-	}
+	inventoryName: string;
 }
 
 export default function ModalUpdateRegister({
 	modalId,
-	isActive,
 	row,
-	setOpenedModal,
-	isModalActive,
+	closeModalHandler,
 	dataUpdater,
 	apiInstance,
+	inventoryName,
 }: Props) {
 	const [readOnly, setReadOnly] = useState<boolean>(true);
-	const [invalidInputsId, setInvalidInputsId] = useState<string[]>([]);
-
-	const [reload, setReload] = useState(false);
 
 	const formRef = useRef<HTMLFormElement>(null);
 	const submitButtonRef = useRef<HTMLInputElement>(null);
+
+	const { modalList, addModal, closeModal } = useModal();
+	const { invalidInputList, addInvalidInput, removeInvalidInput } =
+		useInvalidInput();
+
 	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
-		const formObj = Object.fromEntries(formData.entries()); /*
+		const formObj = Object.fromEntries(formData.entries());
 		apiInstance.update(String(row?.data[0].value), formObj).then(() => {
-			console.log(1);
-			//dataUpdater((u) => !u);
-			setReload((u) => !u);
-		});*/
-		setOpenedModal(EModals.confirmSaveRegister, false);
-		setOpenedModal(1, false);
+			dataUpdater((u) => !u);
+		});
+		closeModalHandler(modalId);
 	};
 
-	useEffect(() => {
-		//console.log(invalidInputsId);
-	}, [invalidInputsId, reload]);
+	const deleteItem = () => {
+		apiInstance.delete(String(row?.data[0].value)).then(() => {
+			dataUpdater((u) => !u);
+		});
+		closeModalHandler(modalId);
+	};
 
-	function setInvalidInputId(inputId: string, pushCondition: boolean) {
-		if (invalidInputsId) {
-			invalidInputsIdController.remove(inputId);
-			if (pushCondition) {
-				invalidInputsIdController.add(inputId);
+	const modalConfirmUpdateRegister: React.ReactNode = (
+		<ModalConfirm
+			key={modalController.getNextId()}
+			modalId={modalController.getNextId()}
+			title={"Você tem CERTEZA que deseja salvar as alterações feitas?"}
+			closeModalHandler={closeModal}
+			cancelCta={{
+				text: "Cancelar",
+				closeModal: true,
+				color: "#0284c7",
+			}}
+			confirmCta={{
+				text: "Salvar",
+				action: () => {
+					submitButtonRef.current?.click();
+				},
+				closeModal: true,
+				color: "#0284c7",
+			}}
+		/>
+	);
+
+	const modalConfirmDeleteRegister: React.ReactNode = (
+		<ModalConfirm
+			key={modalController.getNextId()}
+			modalId={modalController.getNextId()}
+			title={
+				<>
+					Você tem certeza que deseja excluir{" "}
+					<span className="text-red-600">PERMANENTEMENTE</span> o registro
+					selecionado?
+				</>
 			}
-
-			setInvalidInputsId(invalidInputsIdController.invalidInputsId);
-		}
-	}
-
-	function closeEditMode() {
-		setOpenedModal(EModals.confirmSaveRegister, false);
-		setReadOnly(true);
-		setReload((u) => !u);
-	}
+			closeModalHandler={closeModal}
+			cancelCta={{
+				text: "Cancelar",
+				closeModal: true,
+				color: "#dc2626",
+			}}
+			confirmCta={{
+				text: "Excluir",
+				action: () => deleteItem(),
+				closeModal: true,
+				color: "#dc2626",
+			}}
+		/>
+	);
 
 	return (
 		<>
@@ -105,17 +120,17 @@ export default function ModalUpdateRegister({
 							>
 								#{row?.data[0].value}
 							</span>
-							<p>{readOnly ? "Informações do Produto" : "Edição do Produto"}</p>
+							<p>
+								{readOnly
+									? `Informações do ${inventoryName}`
+									: `Edição do ${inventoryName}`}
+							</p>
 						</div>
 						<hr></hr>
 					</>
 				}
-				isActive={isActive}
-				closeModalHandler={(modalId: number) => {
-					setOpenedModal(modalId, false);
-					setReadOnly(true);
-				}}
-				dontCloseOnClickOutside
+				closeModalHandler={closeModalHandler}
+				outsideClick
 			>
 				<form
 					ref={formRef}
@@ -125,6 +140,7 @@ export default function ModalUpdateRegister({
 					{row &&
 						row.data.map((data, index) => {
 							if (!data.formAttributes) return;
+							if (data.formAttributes.addOnly) return;
 							if (data.formAttributes.type === "textarea") {
 								return (
 									<Textarea
@@ -137,8 +153,21 @@ export default function ModalUpdateRegister({
 										regex={data.formAttributes.regex}
 										required={data.formAttributes.required}
 										disabled={readOnly}
-										setInvalidInputId={setInvalidInputId}
-										reload={reload}
+										addInvalidInputHandler={addInvalidInput}
+										removeInvalidInputHandler={removeInvalidInput}
+										key={index}
+									/>
+								);
+							}
+
+							if (data.formAttributes.type === "selection") {
+								return (
+									<SelectField
+										inputId={data.formAttributes.inputId}
+										label={data.formAttributes.label}
+										defaultValue={String(data.value)}
+										selectOptions={data.formAttributes.selectOptions}
+										disabled={readOnly}
 										key={index}
 									/>
 								);
@@ -155,8 +184,8 @@ export default function ModalUpdateRegister({
 									regex={data.formAttributes.regex}
 									required={data.formAttributes.required}
 									disabled={readOnly}
-									setInvalidInputId={setInvalidInputId}
-									reload={reload}
+									addInvalidInputHandler={addInvalidInput}
+									removeInvalidInputHandler={removeInvalidInput}
 									key={index}
 								/>
 							);
@@ -170,7 +199,7 @@ export default function ModalUpdateRegister({
 							borderEqualsText
 							onClick={() => {
 								if (readOnly) {
-									setOpenedModal(modalId, false);
+									closeModalHandler(modalId);
 								} else {
 									setReadOnly(true);
 								}
@@ -183,9 +212,7 @@ export default function ModalUpdateRegister({
 								paddingX={8}
 								paddingY={2}
 								borderEqualsText
-								onClick={() => {
-									setOpenedModal(EModals.deleteRegister, true);
-								}}
+								onClick={() => addModal(modalConfirmDeleteRegister)}
 								invertColors
 							/>
 						)}
@@ -197,60 +224,19 @@ export default function ModalUpdateRegister({
 							borderEqualsText
 							onClick={() => {
 								if (!readOnly) {
+									addModal(modalConfirmUpdateRegister);
 								} else {
-									//setReadOnly(false);
+									setReadOnly(false);
 								}
-								setOpenedModal(EModals.confirmSaveRegister, true);
 							}}
 							invertColors
-							disabled={!readOnly && invalidInputsId.length > 0}
+							disabled={!readOnly && invalidInputList.length > 0}
 						/>
 					</div>
 					<input ref={submitButtonRef} type="submit" className="hidden" />
 				</form>
 			</Modal>
-			<ModalConfirm
-				isActive={isModalActive(EModals.confirmSaveRegister)}
-				modalId={EModals.confirmSaveRegister}
-				title={"Você tem CERTEZA que deseja salvar as alterações feitas?"}
-				setOpenedModal={setOpenedModal}
-				cancelCta={{
-					text: "Cancelar",
-					action: () => {
-						setOpenedModal(modalId, false);
-					},
-					color: "#0284c7",
-				}}
-				confirmCta={{
-					text: "Salvar",
-					action: () => {
-						submitButtonRef.current?.click();
-					},
-					color: "#0284c7",
-				}}
-			/>
-			{/* <ModalConfirm
-				isActive={isModalActive(EModals.deleteRegister)}
-				modalId={EModals.deleteRegister}
-				title={
-					<>
-						Você tem certeza que deseja excluir{" "}
-						<span className="text-red-600">PERMANENTEMENTE</span> o registro
-						selecionado?
-					</>
-				}
-				setOpenedModal={setOpenedModal}
-				cancelCta={{
-					text: "Cancelar",
-					action: () => setOpenedModal(EModals.deleteRegister, false),
-					color: "#dc2626",
-				}}
-				confirmCta={{
-					text: "Excluir",
-					action: () => setOpenedModal(EModals.deleteRegister, false),
-					color: "#dc2626",
-				}}
-			/> */}
+			{modalList.map((modal) => modal)}
 		</>
 	);
 }

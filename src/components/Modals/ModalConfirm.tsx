@@ -1,3 +1,4 @@
+import { MouseEventHandler } from "react";
 import RoundButton from "../Buttons/RoundButton";
 import Modal from "./Modal";
 
@@ -7,15 +8,15 @@ interface Props {
 	content?: string | React.ReactNode;
 	confirmCta?: ICtaOptions;
 	cancelCta?: ICtaOptions;
-	dontCloseOnClickOutside?: boolean;
-	isActive: boolean;
-	setOpenedModal: (modalId: number, isOpen: boolean) => void;
+	outsideClick?: boolean;
+	closeModalHandler: (modalId: number) => void;
 }
 
 interface ICtaOptions {
 	text: string;
-	action: ((event: MouseEvent) => void) | (() => void);
+	action?: MouseEventHandler<HTMLButtonElement>;
 	color?: string;
+	closeModal?: boolean;
 }
 
 export default function ModalConfirm({
@@ -24,18 +25,16 @@ export default function ModalConfirm({
 	content,
 	confirmCta = { text: "Confirmar", color: "#71717a", action: () => {} },
 	cancelCta = { text: "Cancelar", color: "#71717a", action: () => {} },
-	dontCloseOnClickOutside = false,
-	isActive,
-	setOpenedModal,
+	outsideClick = false,
+	closeModalHandler,
 }: Props) {
 	return (
 		<Modal
 			modalId={modalId}
 			minWidth={400}
 			title={title}
-			isActive={isActive}
-			closeModalHandler={(modalId: number) => setOpenedModal(modalId, false)}
-			dontCloseOnClickOutside={dontCloseOnClickOutside}
+			closeModalHandler={closeModalHandler}
+			outsideClick={outsideClick}
 		>
 			{content && <div className="mb-4 flex flex-col gap-2">{content}</div>}
 			<div className="flex justify-end gap-4">
@@ -45,7 +44,12 @@ export default function ModalConfirm({
 					paddingX={8}
 					paddingY={2}
 					borderEqualsText
-					onClick={cancelCta.action}
+					onClick={(event) => {
+						if (cancelCta.action) cancelCta.action(event);
+						if (cancelCta.closeModal) {
+							closeModalHandler(modalId);
+						}
+					}}
 				/>
 				<RoundButton
 					text={confirmCta.text}
@@ -54,7 +58,12 @@ export default function ModalConfirm({
 					paddingY={2}
 					borderEqualsText
 					invertColors
-					onClick={confirmCta.action}
+					onClick={(event) => {
+						if (confirmCta.action) confirmCta.action(event);
+						if (confirmCta.closeModal) {
+							closeModalHandler(modalId);
+						}
+					}}
 				/>
 			</div>
 		</Modal>
