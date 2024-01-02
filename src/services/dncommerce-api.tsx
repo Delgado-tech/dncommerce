@@ -21,7 +21,7 @@ export namespace DncommerceApiClient {
 		name?: string;
 		description?: string;
 		price?: number;
-		discount?: number;
+		discount?: string;
 		stock?: number;
 	}
 

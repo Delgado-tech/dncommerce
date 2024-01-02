@@ -49,7 +49,7 @@ function openModalAnimation(modalId: number, callback?: Function) {
 	if (modalOutside) {
 		const modalBody = modalOutside.querySelector("#modalBody") as HTMLDivElement;
 
-		modalOutside.classList.add("bg-[rgba(0,0,0,0.5)]");
+		modalOutside.classList.remove("opacity-0");
 
 		setTimeout(() => {
 			modalBody.classList.replace("opacity-0", "opacity-100");
@@ -82,7 +82,7 @@ export default function useModal(): IUseModal {
 	const [modalList, setModalList] = useState<React.ReactNode[]>([]);
 
 	useEffect(() => {
-		openModalAnimation(modalController.getCurrentId());
+		if (modalList.length > 0) openModalAnimation(modalController.getCurrentId());
 	}, [modalList]);
 
 	const addModal = (modal: React.ReactNode) => {

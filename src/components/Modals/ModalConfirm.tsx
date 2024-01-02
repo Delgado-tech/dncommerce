@@ -41,8 +41,6 @@ export default function ModalConfirm({
 				<RoundButton
 					text={cancelCta.text}
 					textColor={cancelCta.color}
-					paddingX={8}
-					paddingY={2}
 					borderEqualsText
 					onClick={(event) => {
 						if (cancelCta.action) cancelCta.action(event);
@@ -54,8 +52,6 @@ export default function ModalConfirm({
 				<RoundButton
 					text={confirmCta.text}
 					textColor={confirmCta.color}
-					paddingX={8}
-					paddingY={2}
 					borderEqualsText
 					invertColors
 					onClick={(event) => {

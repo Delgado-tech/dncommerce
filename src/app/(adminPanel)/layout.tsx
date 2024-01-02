@@ -17,11 +17,11 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="pt-br">
-			<body className={`${inter.className} flex`}>
-				<div className="z-50 w-full">
+			<body className={`${inter.className} flex bg-zinc-50`}>
+				<div className="z-50 mr-64 sm:mr-0">
 					<SidePanel />
 				</div>
-				<div id={"panelContent"} className="w-full">
+				<div id={"panelContent"} className="w-full overflow-auto">
 					{children}
 				</div>
 			</body>

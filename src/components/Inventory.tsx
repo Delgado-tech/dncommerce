@@ -75,7 +75,6 @@ export default function Inventory({
 
 	const { modalList, addModal, closeModal } = useModal();
 
-	//#region
 	const headers = inventory!.table.headers;
 	const rows = inventory!.table.rows;
 	const layout_shadow = "shadow-md rounded-md";
@@ -97,14 +96,6 @@ export default function Inventory({
 			);
 		}
 	}
-
-	function roundedTableBorder(currentIndex: number, lastIndex: number): string {
-		let roundBorder = "";
-		if (currentIndex >= lastIndex) roundBorder = "rounded-br-md rounded-tr-md";
-
-		return roundBorder;
-	}
-	//#endregion
 
 	const getModalUpdateRegister = (registerIndex: number): React.ReactNode => {
 		return (
@@ -147,16 +138,20 @@ export default function Inventory({
 	return (
 		<section className="w-full bg-zinc-100">
 			{modalList.map((modal) => modal)}
-			<main className="h-full min-h-screen w-full max-w-[1600px] bg-zinc-50 p-16 opacity-90">
+			<main className="h-full min-h-screen w-full max-w-[1600px] bg-zinc-50 p-16 opacity-90 lg:p-8 sm:pt-6">
 				{inventory ? (
 					<>
-						<header className="mb-10 flex items-center justify-between gap-8">
+						<header className="mb-10 flex items-center justify-between gap-8 sm:flex-col">
 							<h1 className="text-2xl font-medium text-zinc-600">
 								Inventário de {inventory.name}s
 							</h1>
 							<RoundButton
 								text={`Adicionar ${inventory.name}`}
-								icon={<FiPlus />}
+								icon={
+									<p>
+										<FiPlus />
+									</p>
+								}
 								onClick={() => addModal(modalCreateRegister)}
 								invertColors
 							/>
@@ -178,12 +173,18 @@ export default function Inventory({
 								))}
 						</section>
 
-						<section>
-							<table className="w-full border-separate border-spacing-y-4 overflow-x-auto text-left tabular-nums">
+						<section className="lg:mt-12 lg:h-[90vh] lg:overflow-auto sm:text-sm">
+							<table className="w-full border-separate border-spacing-y-4 p-2 text-left tabular-nums">
 								<thead className={`text-sky-950`}>
-									<tr className={`sticky top-0 z-50 h-10 bg-zinc-50`}>
-										<th colSpan={headers.length + 1} className="px-4 py-2">
-											<div className="flex items-center gap-8">
+									<tr
+										className={`
+											sticky top-0 z-50 h-10 w-full
+											after:absolute after:-left-2 after:z-[-10] after:h-full after:w-[calc(100%+1rem)] 
+											after:bg-zinc-50 after:content-['_']
+										`}
+									>
+										<th colSpan={headers.length + 1} className="py-2">
+											<div className="flex items-center gap-8 sm:flex-col sm:items-start">
 												<a
 													className={`flex select-none items-center gap-2 font-medium ${
 														checkboxes.length === 0
@@ -220,15 +221,16 @@ export default function Inventory({
 											</div>
 										</th>
 									</tr>
-									<tr className={`sticky top-10 z-40 bg-sky-200 ${layout_shadow}`}>
+									<tr
+										className={`sticky top-10 z-40 bg-sky-200 sm:top-[5.5rem] ${layout_shadow}`}
+									>
 										<th className="rounded-bl-md rounded-tl-md px-4 py-2"></th>
 										{headers.map((header, index) => (
 											<th
 												key={index}
-												className={`px-4 py-2 ${roundedTableBorder(
-													index,
-													headers.length - 1,
-												)}`}
+												className={`px-4 py-2 ${
+													index + 1 >= headers.length && "rounded-br-md rounded-tr-md"
+												}`}
 											>
 												{header}
 											</th>
@@ -251,22 +253,23 @@ export default function Inventory({
 												<input
 													className="checkbox scale-150 cursor-pointer border border-zinc-600"
 													type="checkbox"
-													onClick={(event) =>
-														checkboxHandler(event, String(row.data[0].value) /* id value */)
+													onClick={
+														(event) => checkboxHandler(event, String(row.data[0].value)) // id value;
 													}
 												/>
 											</td>
-											{Object.values(row.data).map((data, index) => (
-												<td
-													key={index}
-													className={`max-w-[200px] px-4 py-4 ${roundedTableBorder(
-														index,
-														rows.length - 1,
-													)} max-md:min-w-[100px]`}
-												>
-													{data.display ?? data.value}
-												</td>
-											))}
+											{Object.values(row.data).map((data, index) => {
+												return (
+													<td
+														key={index}
+														className={`max-w-[200px] px-4 py-4 ${
+															index + 1 >= row.data.length && "rounded-br-md rounded-tr-md"
+														} max-md:min-w-[100px]`}
+													>
+														{data.display ?? data.value}
+													</td>
+												);
+											})}
 										</tr>
 									))}
 								</tbody>

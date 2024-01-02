@@ -5,16 +5,17 @@ import { usePathname } from "next/navigation";
 
 export interface Props {
 	items: IPanelItem[];
+	mobileHideSidePanel: Function;
 }
 
-export default function PanelNav({ items }: Props) {
+export default function PanelNav({ items, mobileHideSidePanel }: Props) {
 	const pathname = usePathname();
 
 	return (
 		<nav>
 			<ul>
 				{items.map((item, index) => (
-					<li key={index}>
+					<li key={index} onClick={() => mobileHideSidePanel()}>
 						<PanelItem
 							title={item.title}
 							icon={item.icon}

@@ -6,6 +6,7 @@ import PanelCurrentUser from "@/components/SidePanel/PanelCurrentUser";
 import PanelNav from "@/components/SidePanel/PanelNav";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import isMobile from "@/utils/isMobile";
 
 export interface Props {}
 
@@ -13,26 +14,10 @@ export default function SidePanel({}: Props) {
 	const headerRef = useRef<HTMLDivElement>(null);
 	const [closedSidePanel, setClosedPanel] = useState<boolean>(false);
 
-	function detectMobile() {
-		const toMatch = [
-			/Android/i,
-			/webOS/i,
-			/iPhone/i,
-			/iPad/i,
-			/iPod/i,
-			/BlackBerry/i,
-			/Windows Phone/i,
-		];
-
-		return toMatch.some((toMatchItem) => {
-			return navigator.userAgent.match(toMatchItem);
-		});
-	}
-
 	useEffect(() => {
 		const painelContentDiv = document.querySelector("#panelContent");
 
-		if (window.innerWidth < 640 || detectMobile()) {
+		if (window.innerWidth < 640 || isMobile()) {
 			if (!closedSidePanel) painelContentDiv?.classList.add("hidden");
 		}
 
@@ -59,6 +44,7 @@ export default function SidePanel({}: Props) {
 	}, [closedSidePanel]);
 
 	const mobileHideSidePanel = () => {
+		if (!isMobile() && window.innerWidth >= 640) return;
 		const painelContentDiv = document.querySelector("#panelContent")!;
 
 		headerRef.current?.classList.add("hidden");
@@ -113,13 +99,13 @@ export default function SidePanel({}: Props) {
 					</div>
 					<hr />
 				</div>
-				<PanelNav items={painelItems} />
+				<PanelNav items={painelItems} mobileHideSidePanel={mobileHideSidePanel} />
 				<PanelCurrentUser logoutHref="/" />
 			</header>
 			{closedSidePanel && (
 				<p
 					className={
-						"fixed ml-2 mt-2 hidden cursor-pointer rounded-full bg-zinc-400 p-2 text-4xl text-white sm:block"
+						"fixed right-2 top-4 hidden cursor-pointer rounded-full bg-zinc-400 p-2 text-2xl text-white opacity-90 sm:block"
 					}
 					onClick={() => mobileShowSidePanel()}
 				>

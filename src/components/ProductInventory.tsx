@@ -73,7 +73,7 @@ export default function ProductInventory({ initialData }: Props) {
 				},
 				{
 					value: discount,
-					display: `${(Math.round(discount * 100) / 100).toFixed(2)}%`,
+					display: `${(Math.round(Number(discount) * 100) / 100).toFixed(2)}%`,
 					formAttributes: {
 						inputId: "discount",
 						type: "text",
@@ -82,8 +82,8 @@ export default function ProductInventory({ initialData }: Props) {
 					},
 				},
 				{
-					value: price - (price * discount) / 100,
-					display: toBRL(price - (price * discount) / 100),
+					value: price - (price * Number(discount)) / 100,
+					display: toBRL(price - (price * Number(discount)) / 100),
 					formAttributes: undefined,
 					defaultValue: "0.00",
 				},
@@ -104,6 +104,15 @@ export default function ProductInventory({ initialData }: Props) {
 	const smallestStock = data.filter((product) => {
 		if (product.stock === Math.min(...stocks)) return product;
 	})[0];
+	const biggestStock = data.filter((product) => {
+		if (product.stock === Math.max(...stocks)) return product;
+	})[0];
+
+	const discount = data.map((product) => Number(product.discount) ?? "0.00");
+	const biggestDiscount = data.filter((product) => {
+		if (product.discount === Number(Math.max(...discount)).toFixed(2))
+			return product;
+	})[0];
 
 	const inventory: IInventory = {
 		table: {
@@ -114,7 +123,16 @@ export default function ProductInventory({ initialData }: Props) {
 		highlights: [
 			{
 				title: "Produto com menor estoque",
-				value: `${smallestStock.name} (${smallestStock.stock})`,
+				value: `${smallestStock.name} (${smallestStock.stock} uni.)`,
+				color: "text-red-500",
+			},
+			{
+				title: "Produto com maior estoque",
+				value: `${biggestStock.name} (${biggestStock.stock} uni.)`,
+			},
+			{
+				title: "Produto com maior desconto",
+				value: `${biggestDiscount.name} (${biggestDiscount.discount}%)`,
 			},
 		],
 	};

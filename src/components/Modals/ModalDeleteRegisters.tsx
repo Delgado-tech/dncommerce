@@ -1,6 +1,4 @@
 import { Dispatch, SetStateAction } from "react";
-import RoundButton from "../Buttons/RoundButton";
-import Modal from "./Modal";
 import ModalConfirm from "./ModalConfirm";
 import { DncommerceApiClient } from "@/services/dncommerce-api";
 

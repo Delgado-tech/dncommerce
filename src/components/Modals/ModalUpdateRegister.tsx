@@ -132,22 +132,50 @@ export default function ModalUpdateRegister({
 				closeModalHandler={closeModalHandler}
 				outsideClick
 			>
-				<form
-					ref={formRef}
-					onSubmit={onSubmit}
-					className="my-4 flex flex-col gap-6"
-				>
-					{row &&
-						row.data.map((data, index) => {
-							if (!data.formAttributes) return;
-							if (data.formAttributes.addOnly) return;
-							if (data.formAttributes.type === "textarea") {
+				<form ref={formRef} onSubmit={onSubmit}>
+					<div className="my-4 flex flex-col gap-6 py-2 sm:max-h-[60vh] sm:overflow-auto">
+						{row &&
+							row.data.map((data, index) => {
+								if (!data.formAttributes) return;
+								if (data.formAttributes.addOnly) return;
+								if (data.formAttributes.type === "textarea") {
+									return (
+										<Textarea
+											inputId={data.formAttributes.inputId}
+											value={String(data.value)}
+											label={data.formAttributes.label}
+											rows={data.formAttributes.rows}
+											minLength={data.formAttributes.minLength}
+											maxLength={data.formAttributes.maxLength}
+											regex={data.formAttributes.regex}
+											required={data.formAttributes.required}
+											disabled={readOnly}
+											addInvalidInputHandler={addInvalidInput}
+											removeInvalidInputHandler={removeInvalidInput}
+											key={index}
+										/>
+									);
+								}
+
+								if (data.formAttributes.type === "selection") {
+									return (
+										<SelectField
+											inputId={data.formAttributes.inputId}
+											label={data.formAttributes.label}
+											defaultValue={String(data.value)}
+											selectOptions={data.formAttributes.selectOptions}
+											disabled={readOnly}
+											key={index}
+										/>
+									);
+								}
+
 								return (
-									<Textarea
+									<Input
 										inputId={data.formAttributes.inputId}
 										value={String(data.value)}
+										type={data.formAttributes.type}
 										label={data.formAttributes.label}
-										rows={data.formAttributes.rows}
 										minLength={data.formAttributes.minLength}
 										maxLength={data.formAttributes.maxLength}
 										regex={data.formAttributes.regex}
@@ -158,80 +186,50 @@ export default function ModalUpdateRegister({
 										key={index}
 									/>
 								);
-							}
-
-							if (data.formAttributes.type === "selection") {
-								return (
-									<SelectField
-										inputId={data.formAttributes.inputId}
-										label={data.formAttributes.label}
-										defaultValue={String(data.value)}
-										selectOptions={data.formAttributes.selectOptions}
-										disabled={readOnly}
-										key={index}
-									/>
-								);
-							}
-
-							return (
-								<Input
-									inputId={data.formAttributes.inputId}
-									value={String(data.value)}
-									type={data.formAttributes.type}
-									label={data.formAttributes.label}
-									minLength={data.formAttributes.minLength}
-									maxLength={data.formAttributes.maxLength}
-									regex={data.formAttributes.regex}
-									required={data.formAttributes.required}
-									disabled={readOnly}
-									addInvalidInputHandler={addInvalidInput}
-									removeInvalidInputHandler={removeInvalidInput}
-									key={index}
-								/>
-							);
-						})}
-					<div className="flex justify-end gap-4">
-						<RoundButton
-							text={readOnly ? "Fechar" : "Cancelar"}
-							textColor="#71717a"
-							paddingX={8}
-							paddingY={2}
-							borderEqualsText
-							onClick={() => {
-								if (readOnly) {
-									closeModalHandler(modalId);
-								} else {
-									setReadOnly(true);
-								}
-							}}
-						/>
-						{readOnly && (
+							})}
+					</div>
+					<div className="flex justify-end gap-4 sm:grid sm:grid-cols-2">
+						<p className="sm:row-span-2">
 							<RoundButton
-								text={"Excluir"}
-								textColor={"#dc2626"}
-								paddingX={8}
-								paddingY={2}
+								text={readOnly ? "Fechar" : "Cancelar"}
+								textColor="#71717a"
 								borderEqualsText
-								onClick={() => addModal(modalConfirmDeleteRegister)}
-								invertColors
+								onClick={() => {
+									if (readOnly) {
+										closeModalHandler(modalId);
+									} else {
+										setReadOnly(true);
+									}
+								}}
 							/>
+						</p>
+						{readOnly && (
+							<p className="sm:justify-self-end">
+								<RoundButton
+									text={"Excluir"}
+									textColor={"#dc2626"}
+									borderEqualsText
+									onClick={() => addModal(modalConfirmDeleteRegister)}
+									invertColors
+								/>
+							</p>
 						)}
-						<RoundButton
-							text={readOnly ? "Editar" : "Salvar"}
-							textColor={readOnly ? "#d97706" : "#22c55e"}
-							paddingX={8}
-							paddingY={2}
-							borderEqualsText
-							onClick={() => {
-								if (!readOnly) {
-									addModal(modalConfirmUpdateRegister);
-								} else {
-									setReadOnly(false);
-								}
-							}}
-							invertColors
-							disabled={!readOnly && invalidInputList.length > 0}
-						/>
+						<p className="sm:justify-self-end">
+							<RoundButton
+								text={readOnly ? "Editar" : "Salvar"}
+								textColor={readOnly ? "#d97706" : "#22c55e"}
+								borderEqualsText
+								onClick={() => {
+									if (!readOnly) {
+										addModal(modalConfirmUpdateRegister);
+									} else {
+										setReadOnly(false);
+									}
+								}}
+								invertColors
+								disabled={!readOnly && invalidInputList.length > 0}
+							/>
+						</p>
 					</div>
 					<input ref={submitButtonRef} type="submit" className="hidden" />
 				</form>

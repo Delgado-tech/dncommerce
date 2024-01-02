@@ -149,16 +149,13 @@ export default function ModalCreateRegister({
 							<RoundButton
 								text={"Cancelar"}
 								textColor="#71717a"
-								paddingX={8}
-								paddingY={2}
 								borderEqualsText
+								onClick={() => closeModalHandler(modalId)}
 							/>
 						</span>
 						<RoundButton
 							text={"Adicionar"}
 							textColor={"#22c55e"}
-							paddingX={8}
-							paddingY={2}
 							borderEqualsText
 							onClick={() => addModal(modalConfirmCreateRegister)}
 							invertColors
