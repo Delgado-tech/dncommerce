@@ -163,24 +163,19 @@ export default function Inventory({
 						</header>
 
 						<section className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-10">
-							<div className="h-[100px]">
-								<h2 className="text-zinc-400">Melhor Vendedor</h2>
-								<p className="text-lg font-semibold text-sky-600">
-									Leonardo Felipe Camilo Delgado
-								</p>
-							</div>
-							<div className="h-[100px]">
-								<h2 className="text-zinc-400">Melhor Vendedor</h2>
-								<p className="text-lg font-semibold text-sky-600">
-									Leonardo Felipe Camilo Delgado
-								</p>
-							</div>
-							<div className="h-[100px]">
-								<h2 className="text-zinc-400">Melhor Vendedor</h2>
-								<p className="text-lg font-semibold text-sky-600">
-									Leonardo Felipe Camilo Delgado
-								</p>
-							</div>
+							{inventory.highlights &&
+								inventory.highlights.map((highlight, index) => (
+									<div key={index} className="h-[100px]">
+										<h2 className="text-zinc-400">{highlight.title}</h2>
+										<p
+											className={`text-lg font-semibold ${
+												highlight.color ?? "text-sky-600"
+											}`}
+										>
+											{highlight.value}
+										</p>
+									</div>
+								))}
 						</section>
 
 						<section>

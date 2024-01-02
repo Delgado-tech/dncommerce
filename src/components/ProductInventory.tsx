@@ -100,12 +100,23 @@ export default function ProductInventory({ initialData }: Props) {
 		} as ITableDataRow;
 	});
 
+	const stocks = data.map((product) => product.stock ?? 0);
+	const smallestStock = data.filter((product) => {
+		if (product.stock === Math.min(...stocks)) return product;
+	})[0];
+
 	const inventory: IInventory = {
 		table: {
 			headers,
 			rows,
 		},
 		name: "Produto",
+		highlights: [
+			{
+				title: "Produto com menor estoque",
+				value: `${smallestStock.name} (${smallestStock.stock})`,
+			},
+		],
 	};
 
 	return (

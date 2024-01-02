@@ -32,8 +32,8 @@ export default function SidePanel({}: Props) {
 	useEffect(() => {
 		const painelContentDiv = document.querySelector("#panelContent");
 
-		if ((!closedSidePanel && window.innerWidth < 640) || detectMobile()) {
-			painelContentDiv?.classList.add("hidden");
+		if (window.innerWidth < 640 || detectMobile()) {
+			if (!closedSidePanel) painelContentDiv?.classList.add("hidden");
 		}
 
 		const resizeHandler = (event: UIEvent) => {
