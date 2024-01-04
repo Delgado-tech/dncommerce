@@ -20,6 +20,7 @@ interface Props {
 	maxLength?: number;
 	disabled?: boolean;
 	required?: boolean;
+	isInvalid?: boolean;
 	regex?: RegexFunctionType;
 	addInvalidInputHandler?: (inputId: string) => void;
 	removeInvalidInputHandler?: (inputId: string) => void;
@@ -34,6 +35,7 @@ export default function Input({
 	maxLength,
 	disabled = false,
 	required,
+	isInvalid = false,
 	regex,
 	addInvalidInputHandler,
 	removeInvalidInputHandler,
@@ -150,7 +152,7 @@ export default function Input({
 			>
 				<span
 					className={`trace relative z-[1] before:absolute before:-left-1 before:top-[11px]
-						before:z-[-1] before:h-[1px] before:w-[calc(100%+0.5rem)] before:bg-white
+						before:z-[-1] before:h-[2px] before:w-[calc(100%+0.5rem)] before:bg-white
 						before:content-['_']`}
 				>
 					{label}
@@ -159,7 +161,7 @@ export default function Input({
 			<input
 				type={type}
 				className={`rounded-md border ${
-					invalidData ? "border-red-400 bg-red-50" : "border-zinc-400"
+					invalidData || isInvalid ? "border-red-400 bg-red-50" : "border-zinc-400"
 				} px-3 py-2 outline-none focus:border-sky-400 disabled:bg-zinc-100`}
 				id={inputId}
 				name={inputId}

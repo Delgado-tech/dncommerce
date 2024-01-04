@@ -264,7 +264,7 @@ export default function Inventory({
 														key={index}
 														className={`max-w-[200px] px-4 py-4 ${
 															index + 1 >= row.data.length && "rounded-br-md rounded-tr-md"
-														} max-md:min-w-[100px]`}
+														} max-md:min-w-[100px] break-words`}
 													>
 														{data.display ?? data.value}
 													</td>

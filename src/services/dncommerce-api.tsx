@@ -1,10 +1,11 @@
 import axios from "axios";
 
 export namespace DncommerceApiClient {
-	const url = "https://dncommerce-api.vercel.app";
+	const url = process.env.API_URL;
 	const token = `token=${process.env.DNCOMMERCE_API_TOKEN}`;
 	const productURL = `${url}/products`;
 	const userURL = `${url}/users`;
+	const loginUrl = `${url}/login`;
 
 	export interface IUser {
 		id?: number;
@@ -14,6 +15,7 @@ export namespace DncommerceApiClient {
 		pass?: string;
 		gender?: string;
 		access_level?: number;
+		token_timestamp?: number;
 	}
 
 	export interface IProduct {
@@ -42,6 +44,15 @@ export namespace DncommerceApiClient {
 			return this._instance || (this._instance = new this());
 		}
 
+		async login(email: string, pass: string): Promise<any> {
+			const response = await axios
+				.post(`${loginUrl}/${email}/${pass}`)
+				.then((res) => res.data.token)
+				.catch((error) => error.response.data.message);
+
+			return response;
+		}
+
 		async get(): Promise<IUser[]> {
 			const {
 				data: { data },
@@ -52,7 +63,7 @@ export namespace DncommerceApiClient {
 			const {
 				data: { data },
 			} = await axios.get(`${userURL}/${id}?${token}`);
-			return data;
+			return data[0];
 		}
 		async create(body: IUser): Promise<boolean> {
 			await axios.post(`${userURL}?${token}`, body);

@@ -1,13 +1,5 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function Panel() {
-	return (
-		<>
-			<ul>
-				<li>
-					<Link href={"/panel/products"}>aaProduct Panel</Link>
-				</li>
-			</ul>
-		</>
-	);
+export default function HomePage() {
+	redirect("/login");
 }

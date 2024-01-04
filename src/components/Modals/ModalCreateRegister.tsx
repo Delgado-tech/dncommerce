@@ -40,11 +40,9 @@ export default function ModalCreateRegister({
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
-		console.log(formObj);
 		apiInstance.create(formObj).then(() => {
 			dataUpdater((u) => !u);
 		});
-		//closeModalHandler(modalId);
 	};
 
 	const modalConfirmCreateRegister: React.ReactNode = (
@@ -145,7 +143,7 @@ export default function ModalCreateRegister({
 							);
 						})}
 					<div className="flex justify-end gap-4">
-						<span className="closeModalCaller">
+						<span>
 							<RoundButton
 								text={"Cancelar"}
 								textColor="#71717a"

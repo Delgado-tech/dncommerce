@@ -14,7 +14,7 @@ interface Props {
 	borderColor?: string;
 	borderEqualsText?: boolean;
 	invertColors?: boolean;
-	typeSubmit?: boolean;
+	type?: "button" | "submit" | "reset" | undefined;
 	disabled?: boolean;
 }
 
@@ -29,6 +29,7 @@ export default function RoundButton({
 	borderColor = "#0284c7",
 	borderEqualsText,
 	invertColors,
+	type = "button",
 	disabled = false,
 }: Props) {
 	if (borderEqualsText) {
@@ -53,22 +54,23 @@ export default function RoundButton({
 		textColor = tempBgColor;
 	}
 
-	return (
-		<Link href={href ?? "#"}>
-			<button
-				onClick={onClick}
-				className={`flex cursor-pointer select-none items-center gap-2 rounded-full px-8 py-2 transition-all hover:scale-105 hover:shadow-sm hover:brightness-110 disabled:cursor-not-allowed sm:px-6 sm:text-sm`}
-				style={{
-					backgroundColor: bgColor,
-					color: textColor,
-					border: border ? "1px solid" : "none",
-					borderColor: borderColor,
-				}}
-				disabled={disabled}
-			>
-				{text && <p>{text}</p>}
-				{icon}
-			</button>
-		</Link>
+	const button: React.ReactNode = (
+		<button
+			onClick={onClick}
+			className={`flex cursor-pointer select-none items-center gap-2 rounded-full px-8 py-2 transition-all hover:scale-105 hover:shadow-sm hover:brightness-110 disabled:cursor-not-allowed sm:px-6 sm:text-sm`}
+			style={{
+				backgroundColor: bgColor,
+				color: textColor,
+				border: border ? "1px solid" : "none",
+				borderColor: borderColor,
+			}}
+			type={type}
+			disabled={disabled}
+		>
+			{text && <p>{text}</p>}
+			{icon}
+		</button>
 	);
+
+	return href ? <Link href={href ?? "#"}>{button}</Link> : <>{button}</>;
 }

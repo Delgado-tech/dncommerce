@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function Panel() {
+export default function PanelHomePage() {
 	return (
 		<>
 			<ul>
