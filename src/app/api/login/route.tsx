@@ -2,7 +2,6 @@ import { DncommerceApiClient } from "@/services/dncommerce-api";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { redirect } from "next/dist/server/api-utils";
 
 const apiInstance = DncommerceApiClient.Users.Instance();
 
@@ -11,21 +10,24 @@ interface IToken {
 	timestamp: number;
 }
 
-export async function GET() {
-	const cookie = cookies().get("token");
+export async function GET(req: NextRequest) {
+	const token = req.headers.get("token");
 
-	if (!cookie) {
-		return NextResponse.json({ sucess: false });
+	if (!token) {
+		return NextResponse.json({ success: false });
 	}
 
-	const decodeToken = jwt.decode(cookie.value) as IToken;
+	const decodeToken = jwt.decode(token) as IToken;
 	const user = await apiInstance.getId(String(decodeToken.token));
 
 	if (user.token_timestamp !== decodeToken.timestamp) {
-		return NextResponse.json({ sucess: false });
+		return NextResponse.json({ success: false });
 	}
 
-	return NextResponse.json({ id: user.id, sucess: true }, { status: 200 });
+	return NextResponse.json(
+		{ id: user.id, username: user.name, success: true },
+		{ status: 200 },
+	);
 }
 
 export async function POST(req: NextRequest) {
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
 	if (String(token).includes("Error:")) {
 		cookies().delete("token");
 		return NextResponse.json({
-			sucess: false,
+			success: false,
 			errorMessage: "E-mail ou senha inválidos!",
 		});
 	}
@@ -47,18 +49,20 @@ export async function POST(req: NextRequest) {
 
 	if (!user) {
 		cookies().delete("token");
-		return NextResponse.json({ sucess: false, errorMessage: "Usuário inválido" });
+		return NextResponse.json({
+			success: false,
+			errorMessage: "Usuário inválido",
+		});
 	}
 
 	if (user.access_level) {
 		if (user.access_level < 3) {
 			cookies().delete("token");
-			return NextResponse.json({ sucess: false, errorMessage: "Acesso negado!" });
+			return NextResponse.json({ success: false, errorMessage: "Acesso negado!" });
 		}
 	}
-
 	return NextResponse.json(
-		{ sucess: true },
+		{ success: true },
 		{
 			status: 200,
 			headers: {
@@ -79,7 +83,7 @@ export async function DELETE() {
 	cookies().delete("token");
 
 	return NextResponse.json(
-		{ sucess: true },
+		{ success: true },
 		{
 			status: 200,
 		},

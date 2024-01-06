@@ -35,12 +35,19 @@ export default function Modal({
 
 	useEffect(() => {
 		const modalOutside = modalRef.current;
+		const modalContainer = modalOutside?.querySelector(`#modalContainer`);
 		const modalBody = modalOutside?.querySelector(`#modalBody`);
 
 		if (window.innerWidth < 640 || window.outerWidth < 640) {
 			setModalSize((prevEntries) => {
 				return { ...prevEntries, minWidth: 100 };
 			});
+		}
+
+		if (window.innerHeight < modalBody!.clientHeight) {
+			modalContainer?.classList.replace("items-center", "items-start");
+		} else {
+			modalContainer?.classList.replace("items-start", "items-center");
 		}
 
 		const outsideModalClick = (event: MouseEvent) => {
@@ -63,7 +70,14 @@ export default function Modal({
 			const width = window.innerWidth;
 			const widthOuter = window.outerWidth;
 
+			const height = window.innerHeight;
+
 			const newMinWidth = width < 640 || widthOuter < 640 ? 100 : minWidth;
+			if (height < modalBody!.clientHeight) {
+				modalContainer?.classList.replace("items-center", "items-start");
+			} else {
+				modalContainer?.classList.replace("items-start", "items-center");
+			}
 
 			setModalSize((prevEntries) => {
 				return { ...prevEntries, minWidth: newMinWidth };
@@ -88,7 +102,10 @@ export default function Modal({
 			id={`modal#${modalId}`}
 			className={`fixed left-0 top-0 z-[999] h-screen w-full bg-[rgba(0,0,0,0.5)] opacity-0`}
 		>
-			<div className="flex h-screen items-center justify-center">
+			<div
+				id={"modalContainer"}
+				className="flex h-screen items-center justify-center overflow-auto"
+			>
 				<div
 					id={`modalBody`}
 					className={`relative translate-y-[100%] transform rounded-md bg-white p-4 opacity-0 shadow-md transition-all`}

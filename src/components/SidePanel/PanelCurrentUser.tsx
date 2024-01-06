@@ -1,27 +1,43 @@
 import { FiArrowRight } from "react-icons/fi";
 import RoundButton from "../Buttons/RoundButton";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Loading from "../Loading";
 
 interface Props {
-	logoutHref: string;
+	userId?: number;
+	username?: string;
 }
 
-export default function PanelCurrentUser({ logoutHref }: Props) {
+export default function PanelCurrentUser({ userId, username }: Props) {
+	const router = useRouter();
+
 	return (
 		<section className="absolute bottom-0 left-0 flex w-full flex-col items-center justify-center bg-zinc-100 p-4">
 			<div className="flex w-full items-center gap-4 pb-4">
 				<figure
-					className={`flex h-10 w-10 select-none items-center justify-center rounded-full bg-sky-600 font-medium text-white`}
+					className={`mt-2 flex h-10 w-10 select-none items-center justify-center self-start rounded-full bg-sky-600 font-medium text-white`}
 				>
-					<span>L</span>
+					<span>{username && username[0]}</span>
 				</figure>
-				<div className="text-zinc-600">
+				<div className="w-[80%] text-zinc-600">
 					<p className="select-none">
-						id:<span className="select-text">1</span>
+						id:<span className="select-text">{userId}</span>
 					</p>
-					<p className="font-medium">Leonardo Delgado</p>
+					<p className="break-words font-medium">{username || ""}</p>
 				</div>
 			</div>
-			<RoundButton text="Log Out" icon={<FiArrowRight />} href={logoutHref} />
+			<RoundButton
+				text="Log Out"
+				icon={<FiArrowRight />}
+				onClick={() => {
+					fetch(`${window.location.protocol}//${window.location.host}/api/login`, {
+						method: "delete",
+					}).then(() => {
+						router.push("/login");
+					});
+				}}
+			/>
 		</section>
 	);
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import { DncommerceApiClient } from "@/services/dncommerce-api";
 import Image from "next/image";
 import Input from "../Form/Input";
 import RoundButton from "../Buttons/RoundButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "next/navigation";
+import Loading from "../Loading";
 
 interface Props {}
 
@@ -23,11 +23,7 @@ export default function Login({}: Props) {
 		message: "",
 	});
 	const [showPass, setShowPass] = useState<boolean>(false);
-
-	useEffect(() => {
-		//fetch login
-		//chech if is logged in panel
-	});
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -35,18 +31,20 @@ export default function Login({}: Props) {
 		const formData = new FormData(target);
 		const { email, pass } = Object.fromEntries(formData.entries());
 
-		fetch("/api/login", {
+		setLoading(true);
+
+		fetch(`${window.location.protocol}//${window.location.host}/api/login`, {
 			method: "post",
 			headers: { "content-type": "application/json" },
 			body: JSON.stringify({ email, pass }),
 		})
 			.then((res) => res.json())
 			.then((res) => {
-				if (res.sucess) {
+				if (res.success) {
 					router.push("/panel");
 					return;
 				}
-
+				setLoading(false);
 				setInvalidLogin({ isInvalid: true, message: res.errorMessage });
 			});
 	};
@@ -65,8 +63,9 @@ export default function Login({}: Props) {
 	};
 
 	return (
-		<section className="flex h-screen w-full items-center justify-center bg-zinc-200">
-			<main className="flex w-[clamp(500px,_25%,_800px)] flex-col items-center gap-12 rounded bg-white p-8">
+		<section className="tall:items-start flex h-screen w-full items-center justify-center overflow-auto bg-zinc-200">
+			{loading && <Loading />}
+			<main className="flex w-[clamp(500px,_25%,_800px)] flex-col items-center gap-12 overflow-auto rounded bg-white p-8 sm:h-screen sm:w-full">
 				<section className="flex flex-col items-center gap-4">
 					{/* Admin Panel Logo */}
 					<div className="flex items-center gap-4">
@@ -82,7 +81,10 @@ export default function Login({}: Props) {
 					</div>
 				</section>
 
-				<form onSubmit={onSubmit} className="flex w-full flex-col gap-8 px-8 pb-12">
+				<form
+					onSubmit={onSubmit}
+					className="flex w-full flex-col gap-8 px-8 pb-12 sm:px-0"
+				>
 					<span className="h-4 self-center text-lg text-red-500">
 						{invalidLogin.message}
 					</span>
@@ -113,8 +115,10 @@ export default function Login({}: Props) {
 							</label>
 						</div>
 					</div>
-					<span className="self-end">
-						<RoundButton text="Avançar" type={"submit"} invertColors />
+					<span className="tall:relative tall:pt-2 tall:sm:pt-8 tall:sm:bottom-0 self-end sm:absolute sm:bottom-8 sm:left-0 sm:flex sm:w-full sm:justify-center">
+						<span className="sm:w-[200px]">
+							<RoundButton text="Avançar" type={"submit"} invertColors />
+						</span>
 					</span>
 				</form>
 			</main>

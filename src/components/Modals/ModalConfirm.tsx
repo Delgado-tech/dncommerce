@@ -38,29 +38,33 @@ export default function ModalConfirm({
 		>
 			{content && <div className="mb-4 flex flex-col gap-2">{content}</div>}
 			<div className="flex justify-end gap-4">
-				<RoundButton
-					text={cancelCta.text}
-					textColor={cancelCta.color}
-					borderEqualsText
-					onClick={(event) => {
-						if (cancelCta.action) cancelCta.action(event);
-						if (cancelCta.closeModal) {
-							closeModalHandler(modalId);
-						}
-					}}
-				/>
-				<RoundButton
-					text={confirmCta.text}
-					textColor={confirmCta.color}
-					borderEqualsText
-					invertColors
-					onClick={(event) => {
-						if (confirmCta.action) confirmCta.action(event);
-						if (confirmCta.closeModal) {
-							closeModalHandler(modalId);
-						}
-					}}
-				/>
+				<span>
+					<RoundButton
+						text={cancelCta.text}
+						textColor={cancelCta.color}
+						borderEqualsText
+						onClick={(event) => {
+							if (cancelCta.action) cancelCta.action(event);
+							if (cancelCta.closeModal) {
+								closeModalHandler(modalId);
+							}
+						}}
+					/>
+				</span>
+				<span>
+					<RoundButton
+						text={confirmCta.text}
+						textColor={confirmCta.color}
+						borderEqualsText
+						invertColors
+						onClick={(event) => {
+							if (confirmCta.action) confirmCta.action(event);
+							if (confirmCta.closeModal) {
+								closeModalHandler(modalId);
+							}
+						}}
+					/>
+				</span>
 			</div>
 		</Modal>
 	);

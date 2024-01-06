@@ -28,6 +28,11 @@ export default function ModalDeleteRegisters({
 					setSelectedItems([]);
 					closeModalHandler(modalId);
 				}
+
+				const checkbox = document.querySelector(
+					`#checkbox-${index}`,
+				) as HTMLInputElement;
+				checkbox.checked = false;
 			}),
 		);
 	}

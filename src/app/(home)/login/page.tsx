@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import Login from "@/components/Login/Login";
 import axios from "axios";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
+import isAuthenticated from "@/utils/isAuthenticated";
 
 export const metadata: Metadata = {
 	title: "Login",
@@ -10,11 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
-	const headersList = headers();
-	const host = headersList.get("host");
-
-	const { data } = await axios.get(`http://${host}/api/login`); // check if user is logged
-	if (data.sucess) redirect("/panel");
+	if ((await isAuthenticated()).status) redirect("/panel");
 
 	return <Login />;
 }

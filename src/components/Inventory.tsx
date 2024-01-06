@@ -145,16 +145,18 @@ export default function Inventory({
 							<h1 className="text-2xl font-medium text-zinc-600">
 								Inventário de {inventory.name}s
 							</h1>
-							<RoundButton
-								text={`Adicionar ${inventory.name}`}
-								icon={
-									<p>
-										<FiPlus />
-									</p>
-								}
-								onClick={() => addModal(modalCreateRegister)}
-								invertColors
-							/>
+							<span>
+								<RoundButton
+									text={`Adicionar ${inventory.name}`}
+									icon={
+										<p>
+											<FiPlus />
+										</p>
+									}
+									onClick={() => addModal(modalCreateRegister)}
+									invertColors
+								/>
+							</span>
 						</header>
 
 						<section className="grid grid-cols-[repeat(auto-fit,_minmax(200px,_1fr))] gap-10">
@@ -173,7 +175,7 @@ export default function Inventory({
 								))}
 						</section>
 
-						<section className="lg:mt-12 lg:h-[90vh] lg:overflow-auto sm:text-sm">
+						<section className="lg:mt-12 lg:h-max lg:max-h-[90vh] lg:overflow-auto sm:text-sm">
 							<table className="w-full border-separate border-spacing-y-4 p-2 text-left tabular-nums">
 								<thead className={`text-sky-950`}>
 									<tr
@@ -184,7 +186,7 @@ export default function Inventory({
 										`}
 									>
 										<th colSpan={headers.length + 1} className="py-2">
-											<div className="flex items-center gap-8 sm:flex-col sm:items-start">
+											<div className="flex items-center gap-8 sm:flex-col sm:items-start sm:gap-4 sm:pb-4">
 												<a
 													className={`flex select-none items-center gap-2 font-medium ${
 														checkboxes.length === 0
@@ -222,7 +224,7 @@ export default function Inventory({
 										</th>
 									</tr>
 									<tr
-										className={`sticky top-10 z-40 bg-sky-200 sm:top-[5.5rem] ${layout_shadow}`}
+										className={`sticky top-10 z-40 bg-sky-200 md:hidden sm:top-[5.5rem] ${layout_shadow}`}
 									>
 										<th className="rounded-bl-md rounded-tl-md px-4 py-2"></th>
 										{headers.map((header, index) => (
@@ -237,11 +239,12 @@ export default function Inventory({
 										))}
 									</tr>
 								</thead>
-								<tbody>
+								<tbody className="md:flex md:flex-col md:gap-8">
 									{inventory.table.rows.map((row, index) => (
 										<tr
 											key={index}
-											className={`bg-white ${layout_shadow} cursor-pointer transition-all hover:scale-[101%] hover:bg-zinc-100`}
+											className={`bg-white ${layout_shadow} cursor-pointer transition-all 
+											hover:scale-[101%] hover:bg-zinc-100 md:flex md:flex-col`}
 											onClick={(event) => {
 												const target = event.target as HTMLElement;
 												if (target.classList.contains("checkbox")) return;
@@ -249,9 +252,10 @@ export default function Inventory({
 												addModal(getModalUpdateRegister(index));
 											}}
 										>
-											<td className="rounded-bl-md rounded-tl-md px-4 py-4 text-center align-middle">
+											<td className="rounded-bl-md rounded-tl-md px-4 py-4 text-center align-middle md:rounded-md md:bg-sky-300 md:px-6 md:text-start">
 												<input
-													className="checkbox scale-150 cursor-pointer border border-zinc-600"
+													id={`checkbox-${index}`}
+													className="checkbox scale-150 cursor-pointer border border-zinc-600 md:scale-[3]"
 													type="checkbox"
 													onClick={
 														(event) => checkboxHandler(event, String(row.data[0].value)) // id value;
@@ -262,11 +266,14 @@ export default function Inventory({
 												return (
 													<td
 														key={index}
-														className={`max-w-[200px] px-4 py-4 ${
+														className={`max-w-[200px] px-4 py-4 md:max-w-none ${
 															index + 1 >= row.data.length && "rounded-br-md rounded-tr-md"
-														} max-md:min-w-[100px] break-words`}
+														} max-md:min-w-[100px] break-words md:w-full`}
 													>
-														{data.display ?? data.value}
+														<span className="hidden max-w-max rounded bg-sky-200 px-2 font-medium text-sky-950 md:block">
+															{headers[index]}
+														</span>
+														<p>{data.display ?? data.value}</p>
 													</td>
 												);
 											})}

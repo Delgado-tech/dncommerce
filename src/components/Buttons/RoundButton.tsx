@@ -57,7 +57,7 @@ export default function RoundButton({
 	const button: React.ReactNode = (
 		<button
 			onClick={onClick}
-			className={`flex cursor-pointer select-none items-center gap-2 rounded-full px-8 py-2 transition-all hover:scale-105 hover:shadow-sm hover:brightness-110 disabled:cursor-not-allowed sm:px-6 sm:text-sm`}
+			className={`flex w-full cursor-pointer select-none items-center justify-center gap-2 rounded-full px-8 py-2 transition-all hover:scale-105 hover:shadow-sm hover:brightness-110 disabled:cursor-not-allowed sm:px-6 sm:text-sm`}
 			style={{
 				backgroundColor: bgColor,
 				color: textColor,

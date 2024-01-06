@@ -29,6 +29,9 @@ const config: Config = {
 
 			sm: { max: "639px" },
 			// => @media (max-width: 639px) { ... }
+
+			tall: { raw: "(max-height: 540px)" },
+			// => @media (max-height: 540px) { ... }
 		},
 	},
 	plugins: [],

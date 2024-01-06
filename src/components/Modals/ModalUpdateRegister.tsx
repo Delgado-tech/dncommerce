@@ -42,7 +42,10 @@ export default function ModalUpdateRegister({
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
-		apiInstance.update(String(row?.data[0].value), formObj).then(() => {
+		apiInstance.update(String(row?.data[0].value), formObj).then((res) => {
+			if (String(res).includes("Error:")) {
+				alert(res);
+			}
 			dataUpdater((u) => !u);
 		});
 		closeModalHandler(modalId);

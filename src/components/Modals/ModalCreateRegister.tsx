@@ -40,8 +40,12 @@ export default function ModalCreateRegister({
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
-		apiInstance.create(formObj).then(() => {
+		apiInstance.create(formObj).then((res) => {
+			if (String(res).includes("Error:")) {
+				alert(res);
+			}
 			dataUpdater((u) => !u);
+			closeModalHandler(modalId);
 		});
 	};
 
@@ -151,14 +155,16 @@ export default function ModalCreateRegister({
 								onClick={() => closeModalHandler(modalId)}
 							/>
 						</span>
-						<RoundButton
-							text={"Adicionar"}
-							textColor={"#22c55e"}
-							borderEqualsText
-							onClick={() => addModal(modalConfirmCreateRegister)}
-							invertColors
-							disabled={invalidInputList.length > 0}
-						/>
+						<span>
+							<RoundButton
+								text={"Adicionar"}
+								textColor={"#22c55e"}
+								borderEqualsText
+								onClick={() => addModal(modalConfirmCreateRegister)}
+								invertColors
+								disabled={invalidInputList.length > 0}
+							/>
+						</span>
 					</div>
 					<input ref={submitButtonRef} type="submit" className="hidden" />
 				</form>

@@ -32,9 +32,9 @@ export namespace DncommerceApiClient {
 	export abstract class HTTPRequests {
 		abstract get(): Promise<ObjectBody[]>;
 		abstract getId(id: string): Promise<ObjectBody>;
-		abstract create(body: ObjectBody): Promise<boolean>;
-		abstract update(id: string, body: ObjectBody): Promise<boolean>;
-		abstract delete(ids: string): Promise<boolean>;
+		abstract create(body: ObjectBody): Promise<any>;
+		abstract update(id: string, body: ObjectBody): Promise<any>;
+		abstract delete(ids: string): Promise<any>;
 	}
 
 	export class Users extends HTTPRequests {
@@ -65,19 +65,26 @@ export namespace DncommerceApiClient {
 			} = await axios.get(`${userURL}/${id}?${token}`);
 			return data[0];
 		}
-		async create(body: IUser): Promise<boolean> {
-			await axios.post(`${userURL}?${token}`, body);
+		async create(body: IUser): Promise<any> {
+			const response = await axios
+				.post(`${userURL}?${token}`, body)
+				.catch((res) => res.response.data.message);
 
-			return true;
+			return response;
 		}
-		async update(id: string, body: IUser): Promise<boolean> {
-			await axios.put(`${userURL}/${id}?${token}`, body);
+		async update(id: string, body: IUser): Promise<any> {
+			const response = await axios
+				.put(`${userURL}/${id}?${token}`, body)
+				.catch((res) => res.response.data.message);
 
-			return true;
+			return response;
 		}
-		async delete(id: string): Promise<boolean> {
-			await axios.delete(`${userURL}/${id}?${token}`);
-			return true;
+		async delete(id: string): Promise<any> {
+			const response = await axios
+				.delete(`${userURL}/${id}?${token}`)
+				.catch((res) => res.response.data.message);
+
+			return response;
 		}
 	}
 
@@ -100,19 +107,26 @@ export namespace DncommerceApiClient {
 			} = await axios.get(`${productURL}/${id}?${token}`);
 			return data;
 		}
-		async create(body: IProduct): Promise<boolean> {
-			await axios.post(`${productURL}?${token}`, body);
+		async create(body: IProduct): Promise<any> {
+			const response = await axios
+				.post(`${productURL}?${token}`, body)
+				.catch((res) => res.response.data.message);
 
-			return true;
+			return response;
 		}
 		async update(id: string, body: IProduct): Promise<boolean> {
-			await axios.put(`${productURL}/${id}?${token}`, body);
+			const response = await axios
+				.put(`${productURL}/${id}?${token}`, body)
+				.catch((res) => res.response.data.message);
 
-			return true;
+			return response;
 		}
 		async delete(id: string): Promise<boolean> {
-			await axios.delete(`${productURL}/${id}?${token}`);
-			return true;
+			const response = await axios
+				.delete(`${productURL}/${id}?${token}`)
+				.catch((res) => res.response.data.message);
+
+			return response;
 		}
 	}
 }

@@ -51,6 +51,9 @@ export default function UserInventory({ initialData }: Props) {
 				},
 				{
 					value: user.cpf,
+					display: `${user.cpf?.substring(0, 3) || "***"}.***.***-${
+						user.cpf?.substring(user.cpf.length - 2) || "***"
+					}`,
 					formAttributes: {
 						inputId: "cpf",
 						type: "text",

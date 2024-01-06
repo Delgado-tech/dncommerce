@@ -1,16 +1,20 @@
 "use client";
 
-import { FiMenu, FiShoppingBag, FiX } from "react-icons/fi";
+import { FiInfo, FiMenu, FiShoppingBag, FiX } from "react-icons/fi";
 import { Props as IPanelItem } from "@/components/SidePanel/PanelItem";
 import PanelCurrentUser from "@/components/SidePanel/PanelCurrentUser";
 import PanelNav from "@/components/SidePanel/PanelNav";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import isMobile from "@/utils/isMobile";
+import Link from "next/link";
 
-export interface Props {}
+export interface Props {
+	userId?: number;
+	username?: string;
+}
 
-export default function SidePanel({}: Props) {
+export default function SidePanel({ userId, username }: Props) {
 	const headerRef = useRef<HTMLDivElement>(null);
 	const [closedSidePanel, setClosedPanel] = useState<boolean>(false);
 
@@ -73,6 +77,11 @@ export default function SidePanel({}: Props) {
 			icon: <FiShoppingBag />,
 			href: "/panel/users",
 		},
+		{
+			title: "Info",
+			icon: <FiInfo />,
+			href: "/panel",
+		},
 	];
 
 	return (
@@ -84,12 +93,17 @@ export default function SidePanel({}: Props) {
 				{/* Panel head */}
 				<div className="container bg-white p-4">
 					<div className="flex items-center justify-between pb-4">
-						<div className="flex items-center justify-start gap-4">
+						{/* Logo */}
+						<Link
+							href={"/panel"}
+							onClick={() => mobileHideSidePanel()}
+							className="flex cursor-pointer select-none items-center justify-start gap-4"
+						>
 							<figure className="w-10">
 								<Image src={"/svg/logo.svg"} alt="logo" width={40} height={40} />
 							</figure>
 							<h1 className="text-lg font-medium text-sky-900">Admin Panel</h1>
-						</div>
+						</Link>
 						<span
 							className="z-100 fixed right-4 hidden cursor-pointer text-zinc-800 sm:block"
 							onClick={() => mobileHideSidePanel()}
@@ -100,7 +114,7 @@ export default function SidePanel({}: Props) {
 					<hr />
 				</div>
 				<PanelNav items={painelItems} mobileHideSidePanel={mobileHideSidePanel} />
-				<PanelCurrentUser logoutHref="/" />
+				<PanelCurrentUser userId={userId} username={username} />
 			</header>
 			{closedSidePanel && (
 				<p
