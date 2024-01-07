@@ -11,6 +11,7 @@ import { DncommerceApiClient } from "@/services/dncommerce-api";
 import useModal, { modalController } from "@/hooks/useModal";
 import useInvalidInput from "@/hooks/useInvalidInput";
 import SelectField from "../Form/SelectField";
+import axios from "axios";
 
 interface Props {
 	modalId: number;
@@ -42,19 +43,35 @@ export default function ModalUpdateRegister({
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
-		apiInstance.update(String(row?.data[0].value), formObj).then((res) => {
-			if (String(res).includes("Error:")) {
-				alert(res);
-			}
-			dataUpdater((u) => !u);
-		});
+
+		axios
+			.get(`${window.location.protocol}//${window.location.host}/api/getToken`)
+			.then((res) =>
+				apiInstance
+					.update(String(row?.data[0].value), formObj, res.data.token)
+					.then((res) => {
+						if (String(res).includes("Error:")) {
+							alert(res);
+						}
+						dataUpdater((u) => !u);
+					}),
+			);
 		closeModalHandler(modalId);
 	};
 
 	const deleteItem = () => {
-		apiInstance.delete(String(row?.data[0].value)).then(() => {
-			dataUpdater((u) => !u);
-		});
+		axios
+			.get(`${window.location.protocol}//${window.location.host}/api/getToken`)
+			.then((res) =>
+				apiInstance
+					.delete(String(row?.data[0].value), res.data.token)
+					.then((res) => {
+						if (String(res).includes("Error:")) {
+							alert(String(res));
+						}
+						dataUpdater((u) => !u);
+					}),
+			);
 		closeModalHandler(modalId);
 	};
 

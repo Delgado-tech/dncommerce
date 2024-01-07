@@ -5,7 +5,6 @@ import {
 	Dispatch,
 	HTMLInputTypeAttribute,
 	SetStateAction,
-	useEffect,
 	useState,
 } from "react";
 import { FiPlus, FiTrash } from "react-icons/fi";

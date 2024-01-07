@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 import Loading from "../Loading";
+import axios from "axios";
 
 interface Props {}
 
@@ -33,19 +34,18 @@ export default function Login({}: Props) {
 
 		setLoading(true);
 
-		fetch(`${window.location.protocol}//${window.location.host}/api/login`, {
-			method: "post",
-			headers: { "content-type": "application/json" },
-			body: JSON.stringify({ email, pass }),
-		})
-			.then((res) => res.json())
+		axios
+			.post(`${window.location.protocol}//${window.location.host}/api/login`, {
+				email,
+				pass,
+			})
 			.then((res) => {
-				if (res.success) {
+				if (res.data.success) {
 					router.push("/panel");
 					return;
 				}
 				setLoading(false);
-				setInvalidLogin({ isInvalid: true, message: res.errorMessage });
+				setInvalidLogin({ isInvalid: true, message: res.data.errorMessage });
 			});
 	};
 
@@ -63,7 +63,7 @@ export default function Login({}: Props) {
 	};
 
 	return (
-		<section className="tall:items-start flex h-screen w-full items-center justify-center overflow-auto bg-zinc-200">
+		<section className="flex h-screen w-full items-center justify-center overflow-auto bg-zinc-200 tall:items-start">
 			{loading && <Loading />}
 			<main className="flex w-[clamp(500px,_25%,_800px)] flex-col items-center gap-12 overflow-auto rounded bg-white p-8 sm:h-screen sm:w-full">
 				<section className="flex flex-col items-center gap-4">
@@ -115,7 +115,7 @@ export default function Login({}: Props) {
 							</label>
 						</div>
 					</div>
-					<span className="tall:relative tall:pt-2 tall:sm:pt-8 tall:sm:bottom-0 self-end sm:absolute sm:bottom-8 sm:left-0 sm:flex sm:w-full sm:justify-center">
+					<span className="self-end sm:absolute sm:bottom-8 sm:left-0 sm:flex sm:w-full sm:justify-center tall:relative tall:pt-2 tall:sm:bottom-0 tall:sm:pt-8">
 						<span className="sm:w-[200px]">
 							<RoundButton text="Avançar" type={"submit"} invertColors />
 						</span>

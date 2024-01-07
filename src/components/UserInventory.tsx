@@ -6,7 +6,7 @@ import {
 	DncommerceApiClient,
 } from "@/services/dncommerce-api";
 import { RegexTemplate } from "@/utils/regex";
-import { toBRL } from "@/utils/toBRL";
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -21,9 +21,13 @@ export default function UserInventory({ initialData }: Props) {
 	const [dataUpdater, setDataUpdater] = useState<boolean>(false);
 
 	useEffect(() => {
-		API.Users.Instance()
-			.get()
-			.then((res) => setData(res));
+		axios
+			.get(`${window.location.protocol}//${window.location.host}/api/getToken`)
+			.then((res) =>
+				API.Users.Instance()
+					.get(String(res.data.token))
+					.then((res) => setData(res)),
+			);
 	}, [dataUpdater]);
 
 	const headers: string[] = [

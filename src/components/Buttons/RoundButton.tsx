@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MouseEventHandler, ReactNode, useEffect, useRef } from "react";
+import { MouseEventHandler, ReactNode } from "react";
 
 interface Props {
 	text?: string;

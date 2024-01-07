@@ -18,7 +18,9 @@ export async function GET(req: NextRequest) {
 	}
 
 	const decodeToken = jwt.decode(token) as IToken;
-	const user = await apiInstance.getId(String(decodeToken.token));
+	const user = await apiInstance
+		.getId(String(decodeToken.token), token)
+		.catch((res) => res.response.data.message);
 
 	if (user.token_timestamp !== decodeToken.timestamp) {
 		return NextResponse.json({ success: false });
@@ -45,22 +47,15 @@ export async function POST(req: NextRequest) {
 
 	const decodeToken = jwt.decode(token) as IToken;
 
-	const user = await apiInstance.getId(String(decodeToken.token));
+	const user = await apiInstance.getId(String(decodeToken.token), token);
 
-	if (!user) {
-		cookies().delete("token");
+	if (Object.keys(user).length === 0) {
 		return NextResponse.json({
 			success: false,
-			errorMessage: "Usuário inválido",
+			errorMessage: "Acesso Negado!",
 		});
 	}
 
-	if (user.access_level) {
-		if (user.access_level < 3) {
-			cookies().delete("token");
-			return NextResponse.json({ success: false, errorMessage: "Acesso negado!" });
-		}
-	}
 	return NextResponse.json(
 		{ success: true },
 		{

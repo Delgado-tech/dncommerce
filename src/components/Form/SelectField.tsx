@@ -1,16 +1,5 @@
 "use client";
 
-import { IToggleClass, cssToggleClasses } from "@/utils/cssToggleClasses";
-import { RegexFunctionType } from "@/utils/regex";
-import {
-	Dispatch,
-	HTMLInputTypeAttribute,
-	SetStateAction,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
-
 interface Props {
 	inputId: string;
 	defaultValue?: string | number;

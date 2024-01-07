@@ -1,6 +1,7 @@
 import ProductInventory from "@/components/ProductInventory";
 import { DncommerceApiClient as API } from "@/services/dncommerce-api";
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
 	title: "Panel - Products",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default async function ProductsPanelPage() {
-	const products = await API.Products.Instance().get();
+	const token = cookies().get("token")?.value || "";
+	const products = await API.Products.Instance().get(token);
 
 	return <ProductInventory initialData={products} />;
 }

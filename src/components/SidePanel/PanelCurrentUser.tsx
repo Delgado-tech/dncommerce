@@ -1,7 +1,8 @@
 import { FiArrowRight } from "react-icons/fi";
 import RoundButton from "../Buttons/RoundButton";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useState } from "react";
 import Loading from "../Loading";
 
 interface Props {
@@ -11,9 +12,11 @@ interface Props {
 
 export default function PanelCurrentUser({ userId, username }: Props) {
 	const router = useRouter();
+	const [loading, setLoading] = useState<boolean>(false);
 
 	return (
 		<section className="absolute bottom-0 left-0 flex w-full flex-col items-center justify-center bg-zinc-100 p-4">
+			{loading && <Loading />}
 			<div className="flex w-full items-center gap-4 pb-4">
 				<figure
 					className={`mt-2 flex h-10 w-10 select-none items-center justify-center self-start rounded-full bg-sky-600 font-medium text-white`}
@@ -31,11 +34,12 @@ export default function PanelCurrentUser({ userId, username }: Props) {
 				text="Log Out"
 				icon={<FiArrowRight />}
 				onClick={() => {
-					fetch(`${window.location.protocol}//${window.location.host}/api/login`, {
-						method: "delete",
-					}).then(() => {
-						router.push("/login");
-					});
+					setLoading(true);
+					axios
+						.delete(`${window.location.protocol}//${window.location.host}/api/login`)
+						.then(() => {
+							router.push("/login");
+						});
 				}}
 			/>
 		</section>

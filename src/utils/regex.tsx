@@ -9,7 +9,6 @@ export class RegexTemplate {
 	}
 
 	static Decimal(value: string): string {
-		console.log(value);
 		do {
 			value = "0" + value;
 			value = value.replace(/\D/g, "");

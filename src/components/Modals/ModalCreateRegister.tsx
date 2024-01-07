@@ -11,6 +11,7 @@ import { DncommerceApiClient } from "@/services/dncommerce-api";
 import useModal, { modalController } from "@/hooks/useModal";
 import useInvalidInput from "@/hooks/useInvalidInput";
 import SelectField from "../Form/SelectField";
+import axios from "axios";
 
 interface Props {
 	modalId: number;
@@ -40,13 +41,18 @@ export default function ModalCreateRegister({
 		event.preventDefault();
 		const formData = new FormData(formRef.current!);
 		const formObj = Object.fromEntries(formData.entries());
-		apiInstance.create(formObj).then((res) => {
-			if (String(res).includes("Error:")) {
-				alert(res);
-			}
-			dataUpdater((u) => !u);
-			closeModalHandler(modalId);
-		});
+
+		axios
+			.get(`${window.location.protocol}//${window.location.host}/api/getToken`)
+			.then((res) =>
+				apiInstance.create(formObj, res.data.token).then((res) => {
+					if (String(res).includes("Error:")) {
+						alert(res);
+					}
+					dataUpdater((u) => !u);
+					closeModalHandler(modalId);
+				}),
+			);
 	};
 
 	const modalConfirmCreateRegister: React.ReactNode = (
