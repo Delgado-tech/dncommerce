@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:db813b,50:d76f32,100:e0945e&height=150&section=header" width="100%">
 
-## Getting Started
+<html>
+  <h1>ESTUDO DE CASO - <br>
+  Desenvolvimento de Painel Administrativo<br><br></h1>
+</html>
 
-First, run the development server:
+### 🚀 Descrição do projeto:
+> O projeto consiste em um painel administrativo, onde é possível realizar todas as operações de
+> banco de dados (criar, ler, atualizar e deletar), possui duas seções sendo elas a de Produtos e
+> a de Usuários, elas estão disponibilizadas para testar a aplicação, mas vale resaltar que é
+> expressamente proibido inserir informações reais suas ou de terceiros, tendo em visto que o
+> projeto seja público e sua proteção não é garantida.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+#
+
+### 🎯 Resolução:
+Foi criado a modelagem do banco de dados no figma, e seu desenvolvimento utilizando MySQL, foi implementado uma
+[API](https://github.com/Delgado-tech/dncommerce-api) para realizar a filtração dos dados antes de serem enviadas para o banco utilizando Express, já o frontend foi
+utilizando Next.js e Tailwind, para realizar o login utilize os dados abaixo:
+
+```
+email: admin@gmail.com
+```
+```
+senha: 12345678
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<br>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+<div align="left">
+ <img src="">
+ <img src="">
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+</div>
 
-## Learn More
+<br>
 
-To learn more about Next.js, take a look at the following resources:
+<html>
+  <br>
+  <table>
+    <tr>
+      <th></th>
+      <th>NOME</th>
+      <th>DESCRIÇÃO</th>
+    </tr>
+    <!--Linha 1-->
+    <tr>
+      <td> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" width="20px"/></td>
+      <td><strong>Next 14<strong/></td>
+      <td>Framework React</td>
+    </tr>
+    <!--Linha 2-->
+    <tr>
+      <td> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="20px"/></td>
+      <td><strong>Typescript<strong/></td>
+      <td>tipagem e organização</td>
+    </tr>
+    <!--Linha 3-->
+    <tr>
+      <td> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" width="20px"/></td>
+      <td><strong>Tailwind<strong/></td>
+      <td>Estilização</td>
+    </tr>
+    <!--Linha 4-->
+    <tr>
+      <td> <img src="https://user-images.githubusercontent.com/60985347/255576868-e6b084ba-87c2-4fd6-8322-86f47afbe39e.png" width="20px"/></td>
+      <td><strong>Vercel<strong/></td>
+      <td>Deploy</td>
+    </tr>
+  </table>
+  <br>
+</html>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> ### Deploy:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:161b22,100:30363d&height=150&section=footer" width="100%">
