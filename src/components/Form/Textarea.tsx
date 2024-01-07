@@ -53,7 +53,7 @@ export default function Textarea({
 			setInvalidData(false);
 			removeInvalidInputHandler(inputId);
 		}
-	}, [disabled, value]);
+	}, [disabled, value, inputId]);
 
 	useEffect(() => {
 		const labelElement = textareaBodyRef.current?.querySelector("label");

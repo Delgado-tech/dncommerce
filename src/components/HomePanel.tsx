@@ -69,12 +69,12 @@ export default function HomePanel() {
 						</p>
 					</div>
 					<p>
-						Importante ressaltar que os dados apresentados nas seções "<b>Produtos</b>
-						" e "<b>Usuários</b>" são fictícios. Você está convidado a testar a
-						interação do projeto, incluindo a inserção e exclusão de dados. No
-						entanto, é estritamente <u>PROIBIDA</u> a inserção de informações reais,
-						seja suas próprias ou de qualquer outra pessoa, uma vez que o projeto é
-						público e não é possível assegurar que essas informações sejam protegidas.
+						Importante ressaltar que os dados apresentados nas seções <b>Produtos</b>e{" "}
+						<b>Usuários</b> são fictícios. Você está convidado a testar a interação do
+						projeto, incluindo a inserção e exclusão de dados. No entanto, é
+						estritamente <u>PROIBIDA</u> a inserção de informações reais, seja suas
+						próprias ou de qualquer outra pessoa, uma vez que o projeto é público e
+						não é possível assegurar que essas informações sejam protegidas.
 					</p>
 					<div className="flex flex-col gap-2">
 						<h3>Ferramentas utilizadas:</h3>

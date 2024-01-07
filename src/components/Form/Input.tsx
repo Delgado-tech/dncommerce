@@ -59,7 +59,7 @@ export default function Input({
 			setInvalidData(false);
 			removeInvalidInputHandler(inputId);
 		}
-	}, [disabled, value]);
+	}, [disabled, value, inputId]);
 
 	useEffect(() => {
 		const inputElement = inputBodyRef.current?.querySelector("input");
