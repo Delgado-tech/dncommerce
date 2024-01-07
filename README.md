@@ -29,9 +29,12 @@ senha: 12345678
 <br>
 
 <div align="left">
- <img src="">
- <img src="">
-
+ <img src="https://github.com/Delgado-tech/dncommerce/assets/60985347/87377fd3-31f4-4a2c-9071-61020ae48575">
+ <img src="https://github.com/Delgado-tech/dncommerce/assets/60985347/9fbc7bc8-79c0-481b-9b82-a514aab47d94">
+ <img src="https://github.com/Delgado-tech/dncommerce/assets/60985347/e0fb05f3-45ad-40ff-b28b-1d3fa227bfdd">
+ <img src="https://github.com/Delgado-tech/dncommerce/assets/60985347/928e8426-ce03-4d55-8975-ce477d79d18d">
+ <img width="49%" height="700px" src="https://github.com/Delgado-tech/dncommerce/assets/60985347/4e4c8741-d45b-4bfa-82ad-65eb024e2715">
+ <img width="50.5%" height="700px" src="https://github.com/Delgado-tech/dncommerce/assets/60985347/f2f3fd36-e181-4822-ab42-1cada98de1ee">
 </div>
 
 <br>
