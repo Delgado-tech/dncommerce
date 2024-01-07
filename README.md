@@ -34,7 +34,7 @@ senha: 12345678
  <img src="https://github.com/Delgado-tech/dncommerce/assets/60985347/e0fb05f3-45ad-40ff-b28b-1d3fa227bfdd">
  <img src="https://github.com/Delgado-tech/dncommerce/assets/60985347/928e8426-ce03-4d55-8975-ce477d79d18d">
  <img width="49%" height="700px" src="https://github.com/Delgado-tech/dncommerce/assets/60985347/4e4c8741-d45b-4bfa-82ad-65eb024e2715">
- <img width="50.5%" height="700px" src="https://github.com/Delgado-tech/dncommerce/assets/60985347/f2f3fd36-e181-4822-ab42-1cada98de1ee">
+ <img width="50%" height="700px" src="https://github.com/Delgado-tech/dncommerce/assets/60985347/f2f3fd36-e181-4822-ab42-1cada98de1ee">
 </div>
 
 <br>
