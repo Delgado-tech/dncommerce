@@ -8,9 +8,7 @@
 ### 🚀 Descrição do projeto:
 > O projeto consiste em um painel administrativo, onde é possível realizar todas as operações de
 > banco de dados (criar, ler, atualizar e deletar), possui duas seções sendo elas a de Produtos e
-> a de Usuários, elas estão disponibilizadas para testar a aplicação, mas vale resaltar que é
-> expressamente proibido inserir informações reais suas ou de terceiros, tendo em visto que o
-> projeto seja público e sua proteção não é garantida.
+> a de Usuários
 
 #
 
