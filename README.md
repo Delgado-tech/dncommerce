@@ -76,6 +76,7 @@ senha: 12345678
 </html>
 
 > ### Deploy: https://dncommerce-panel.vercel.app/login
+> Banco de dados fora do ar
 
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:161b22,100:30363d&height=150&section=footer" width="100%">
